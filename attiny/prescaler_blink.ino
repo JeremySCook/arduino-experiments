@@ -1,32 +1,18 @@
-/*
-  Blink
+//blinks and sends a software serial message to pin 3
+//commented out "CLKPR" lines allow for prescaler
 
-  Turns an LED on for one second, then off for one second, repeatedly.
+#include <SoftwareSerial.h>
 
-  Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO
-  it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to
-  the correct LED pin independent of which board is used.
-  If you want to know what pin the on-board LED is connected to on your Arduino
-  model, check the Technical Specs of your board at:
-  https://www.arduino.cc/en/Main/Products
+#define RX 3
+#define TX 4
+SoftwareSerial Serial(RX, TX);
 
-  modified 8 May 2014
-  by Scott Fitzgerald
-  modified 2 Sep 2016
-  by Arturo Guadalupi
-  modified 8 Sep 2016
-  by Colby Newman
-
-  This example code is in the public domain.
-
-  https://www.arduino.cc/en/Tutorial/BuiltInExamples/Blink
-*/
-
-// the setup function runs once when you press reset or power the board
 void setup() {
-  CLKPR = 0x80; // enable system clock prescaler
-  CLKPR = 0x06; // set system clock prescaler to 1, chg p32 ATtiny datasheet, eg 0x06 = 64
+  //CLKPR = 0x80; // enable system clock prescaler
+  //CLKPR = 0x06; // set system clock prescaler to 1, chg p32 ATtiny datasheet, eg 0x06 = 64
   pinMode(0, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Initializing...");
 }
 
 // the loop function runs over and over again forever
@@ -35,4 +21,5 @@ void loop() {
   delay(100);                      // wait for a second
   digitalWrite(0, LOW);   // turn the LED off by making the voltage LOW
   delay(100);                      // wait for a second
+  Serial.println("blinking!");
 }
