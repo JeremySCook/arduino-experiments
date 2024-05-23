@@ -23,18 +23,16 @@
 */
 
 // the setup function runs once when you press reset or power the board
-// Modified by @jeremyscook for use on ATtiny w/ prescaler
-
 void setup() {
   CLKPR = 0x80; // enable system clock prescaler
-  CLKPR = 0x05; // set system clock prescaler 32
+  CLKPR = 0x06; // set system clock prescaler to 1, chg p32 ATtiny datasheet, eg 0x06 = 64
   pinMode(0, OUTPUT);
 }
 
 // the loop function runs over and over again forever
 void loop() {
   digitalWrite(0, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(50);                      // wait for a second
+  delay(100);                      // wait for a second
   digitalWrite(0, LOW);   // turn the LED off by making the voltage LOW
-  delay(50);                      // wait for a second
+  delay(100);                      // wait for a second
 }
