@@ -1,6 +1,3 @@
-//Have not gotten the serial portion to respond yet, but light
-//does blink based on contact
-
 #include <ADCTouch.h>
 #include <SoftwareSerial.h>
 
@@ -17,8 +14,7 @@ void setup()
 
 void loop() 
 {
-    int value0 = ADCTouch.read(2, __AVR_ATtiny45__);
-    Serial.print("Analog Value: "); Serial.println(value0);
+    int value0 = ADCTouch.read(1, __AVR_ATtiny45__); //pin A1, ie PB2, A2/A3 interfere with TX/RX here
     if (value0 > 600) {
     digitalWrite(0, HIGH);
     }
@@ -26,4 +22,5 @@ void loop()
     digitalWrite(0, LOW);
     }
     delay(100);
+    Serial.print("Analog Value: "); Serial.println(value0);
 }
