@@ -1,3 +1,7 @@
+//by @jeremyscook May 24, 2024
+//Tested with ATtiny45V
+//library parameters __AVR_ATtiny25__    __AVR_ATtiny45__    __AVR_ATtiny85__ also possible
+
 #include <ADCTouch.h>
 #include <SoftwareSerial.h>
 
