@@ -1,11 +1,12 @@
 //needs ATtiny85 - will not compile on -45
 //Tested May 24th 2024 - @jeremyscook
-//Added touch on ADC Pin 3, works but does not stay on constantly
-//(sounds like a telephone ringer)
 
 #include <ADCTouch.h>
 #include <MIDI.h>
 #include <SoftwareSerial.h>
+
+bool onBit = 0; //toggle bit to prevent system from playing note over and over
+int capOn = 750;
 
 // Define the SoftwareSerial port
 SoftwareSerial mySerial(0, 1); // RX, TX - possible to assign both to same pin in in/out-only situation?
@@ -20,14 +21,17 @@ void setup() {
 void loop() {
     int value0 = ADCTouch.read(3, __AVR_ATtiny85__);
     // Send a MIDI Note On message (Note, Velocity, Channel)
-    if (value0 > 750){
+    if ((value0 >= capOn) && (onBit == 0)){
     midi2.sendNoteOn(60, 127, 1);
     digitalWrite(2, HIGH);
-    delay(10);
+    onBit = 1;
+    delay(5);
     }
-    else{
+    if ((value0 < capOn) && (onBit == 1)){
     midi2.sendNoteOff(60, 0, 1);
     digitalWrite(2, LOW);
-    delay(10);
+    onBit = 0;
+    delay(5);
     }
+    delay(50); //delays implemented to keep from "ringing" on and off
 }
