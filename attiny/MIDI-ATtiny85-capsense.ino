@@ -1,21 +1,21 @@
 //needs ATtiny85 - will not compile on -45
-//Tested May 24th 2024 - @jeremyscook
+//Tested May 25th 2024 - @jeremyscook
 
 #include <ADCTouch.h>
 #include <MIDI.h>
 #include <SoftwareSerial.h>
 
 bool onBit = 0; //toggle bit to prevent system from playing note over and over
-int capOn = 750;
+int capOn = 750; //capacitive value - may need to chg based on implementation
 
 // Define the SoftwareSerial port
-SoftwareSerial mySerial(0, 1); // RX, TX - possible to assign both to same pin in in/out-only situation? (does not appear to work per May 25th (1,1) test)
+SoftwareSerial mySerial(2, 1); // RX, TX - RX (2) used later as no input used
 MIDI_CREATE_CUSTOM_INSTANCE(SoftwareSerial, mySerial, midi2, midi::DefaultSettings);
 
 void setup() {
     // Initialize SoftwareSerial
     mySerial.begin(31250); // MIDI baud rate
-    pinMode(2, OUTPUT);
+    pinMode(2, OUTPUT); //works w/ 2 as output, which is the (unused) Rx Pin
 }
 
 void loop() {
