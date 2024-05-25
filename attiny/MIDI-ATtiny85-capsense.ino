@@ -9,7 +9,7 @@ bool onBit = 0; //toggle bit to prevent system from playing note over and over
 int capOn = 750;
 
 // Define the SoftwareSerial port
-SoftwareSerial mySerial(0, 1); // RX, TX - possible to assign both to same pin in in/out-only situation?
+SoftwareSerial mySerial(0, 1); // RX, TX - possible to assign both to same pin in in/out-only situation? (does not appear to work per May 25th (1,1) test)
 MIDI_CREATE_CUSTOM_INSTANCE(SoftwareSerial, mySerial, midi2, midi::DefaultSettings);
 
 void setup() {
