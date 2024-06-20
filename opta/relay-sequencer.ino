@@ -1,20 +1,26 @@
+//by @jeremyscook 6/19/2024
 //could go through different modes/BPM via onboard button???
+//hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
 
 #include "OptaBlue.h"
 
 int timeOnDelay = 50; //how long device are active before retract (ms)
 int BPM = 120;
-//int beatDelay = (60/BPM * 1000); //delay between beats in ms
-int beatDelay = 500;
-bool sequence0[] = {1,1,1,1,1,1,1,1}; //cymbals - every beat - SSR1 activates solenoid to hit tumbler
-bool sequence1[] = {0,1,0,1,0,1,0,1}; //bass - every other beat - SSR2 activates solenoid to hit drum
-bool sequence2[] = {0,0,0,1,0,0,0,1}; //snare - physical relay fires for snare sound (maybe multiple relays)
+int beatDelay = 60000/BPM; //delay between beats in ms
+//int beatDelay = 500;
+bool sequence0[] = {1,0,1,0,1,0,1,0}; //kick - hit drum with solenoid
+bool sequence1[] = {1,1,1,1,1,1,1,0}; //hat - hit tumbler with solenoid - USE RELAYS INSTEAD?
+bool sequence2[] = {0,0,1,0,0,0,1,0}; //snare - physical relay fires for snare sound (maybe multiple relays)
 
 void setup() {
   pinMode(LED_RELAY1, OUTPUT);
   pinMode(LED_RELAY2, OUTPUT);
   pinMode(LED_RELAY3, OUTPUT);
   pinMode(LED_RELAY4, OUTPUT); //likely not necessary to assign, but doesn't hurt
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  pinMode(RELAY3, OUTPUT);
+  pinMode(RELAY4, OUTPUT);
 
 }
 
@@ -26,17 +32,26 @@ void loop() {
     }
     if (sequence1[i] == 1){
       digitalWrite(LED_RELAY2, HIGH);
+      digitalWrite(RELAY1, HIGH);
+      digitalWrite(RELAY2, HIGH);
+      digitalWrite(RELAY3, HIGH);
+      digitalWrite(RELAY4, HIGH);
     }
     if (sequence2[i] == 1){
       digitalWrite(LED_RELAY3, HIGH);
+
     }
     delay(timeOnDelay);
     //turn off outputs
     digitalWrite(LED_RELAY1, LOW);
+    digitalWrite(RELAY1, LOW);
     digitalWrite(LED_RELAY2, LOW);
     digitalWrite(LED_RELAY3, LOW);
     digitalWrite(LED_RELAY4, LOW);    
-
+    digitalWrite(RELAY1, LOW);
+    digitalWrite(RELAY2, LOW);
+    digitalWrite(RELAY3, LOW);
+    digitalWrite(RELAY4, LOW);
     delay(beatDelay - timeOnDelay); //time between beats hitting
     //restart the cycle for 8 beats
   }
