@@ -1,7 +1,6 @@
 //by @jeremyscook 6/19/2024
 //could go through different modes/BPM via onboard button???
 //hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
-//current version compiles, but not physically tested
 
 #include "OptaBlue.h"
 
@@ -19,7 +18,7 @@ bool sequence2[] = {0,0,1,0,0,0,1,0}; //snare - physical relay fires for snare s
 
 void setup() {
   OptaController.begin();
-  stsolidExp = OptaController.getExpansion(0); //expansion at index 0 is solid state relay
+  stsolidExp = OptaController.getExpansion(0); //expansion at index 0 is solid state relay needed???
   pinMode(LED_RELAY1, OUTPUT);
   pinMode(LED_RELAY2, OUTPUT);
   pinMode(LED_RELAY3, OUTPUT);
@@ -32,11 +31,13 @@ void setup() {
 }
 
 void loop() {
+  OptaController.update(); //NEEDED??
   for(int i = 0; i<8; i++){
     if (sequence0[i] == 1){ //kick drum - solenoid
       //do something - maybe try lights first??
       digitalWrite(LED_RELAY1, HIGH);
       stsolidExp.digitalWrite(0, HIGH);
+      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
     }
     if (sequence1[i] == 1){
       digitalWrite(LED_RELAY2, HIGH);
@@ -48,6 +49,7 @@ void loop() {
     if (sequence2[i] == 1){ //snare - solenoid - maybe hit tumbler?
       digitalWrite(LED_RELAY3, HIGH);
       stsolidExp.digitalWrite(1, HIGH);
+      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
     }
     delay(timeOnDelay);
     //turn off outputs
@@ -62,6 +64,7 @@ void loop() {
     digitalWrite(RELAY4, LOW);
     stsolidExp.digitalWrite(0, LOW);
     stsolidExp.digitalWrite(1, LOW);
+    stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
     delay(beatDelay - timeOnDelay); //time between beats hitting
     //restart the cycle for 8 beats
   }
