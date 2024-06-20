@@ -1,6 +1,7 @@
 //by @jeremyscook 6/19/2024
 //could go through different modes/BPM via onboard button???
 //hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
+//current version compiles, but not physically tested
 
 #include "OptaBlue.h"
 
@@ -13,7 +14,7 @@ int BPM = 120;
 int beatDelay = 60000/BPM; //delay between beats in ms
 //int beatDelay = 500;
 bool sequence0[] = {1,0,1,0,1,0,1,0}; //kick - hit drum with solenoid
-bool sequence1[] = {1,1,1,1,1,1,1,0}; //hat - hit tumbler with solenoid - USE RELAYS INSTEAD?
+bool sequence1[] = {1,1,1,1,1,1,1,1}; //hat - hit tumbler with solenoid - USE RELAYS INSTEAD?
 bool sequence2[] = {0,0,1,0,0,0,1,0}; //snare - physical relay fires for snare sound (maybe multiple relays)
 
 void setup() {
