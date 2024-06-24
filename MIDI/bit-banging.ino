@@ -3,14 +3,22 @@
 //hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
 //current version compiles, but not physically tested
 
-int baudRate = 31250;
-int baudDelayMicroseconds = ((1.0/baudRate)*1000000);
-int delayBeats = 1000; //delay between playing a note in milliseconds
-int MIDIOutPin = 13;
+// define MIDI message bytes
 
-bool byte1[] = {1,0,0,1,0,0,0,0}; //status byte 90
-bool byte2[] = {0,0,1,1,1,1,0,0}; //data byte 1 3C
-bool byte3[] = {0,1,1,1,1,1,1,1}; //data byte 2 7F
+//bool byte1[] = {1,0,0,1,0,0,0,0}; //status byte 90
+//bool byte2[] = {0,0,1,1,1,1,0,0}; //data byte 1 3C
+//bool byte3[] = {0,1,1,1,1,1,1,1}; //data byte 2 7F
+
+const byte statusByte = B10010000; //0x90; // Note On channel 1
+const byte dataByte1 = B00111100; //0x3C;  // Note number (60)
+const byte dataByte2 = B01111111; //0x7F;  // Velocity (127)
+
+// define MIDI transmission variables
+
+const int MIDIOutPin = 13;
+const int baudRate = 31250;
+const int baudDelayMicroseconds = (1000000 / baudRate); //calculate delay in microseconds
+const int delayBeats = 1000; //delay between playing a note in milliseconds
 
 //Arduino Uno Pin 13 attached to MIDI pin X through 220 ohm resistor
 //Arduino +5V attached to MIDI pin x through 220 ohm resistor
@@ -18,74 +26,36 @@ bool byte3[] = {0,1,1,1,1,1,1,1}; //data byte 2 7F
 void setup() {
 pinMode(13, OUTPUT);
 digitalWrite(MIDIOutPin, HIGH);
-Serial.begin(9600);
+
+// Initialize serial for debugging if needed
+// Serial.begin(9600);
 
 }
 
 void loop() {
-delay(delayBeats);
-//send first byte - includes start low/end high bits
-Serial.println(baudDelayMicroseconds);
-digitalWrite(MIDIOutPin, LOW);
-Serial.print(0);
-delayMicroseconds(baudDelayMicroseconds);
-  for(int i = 0; i<8; i++){
-    if (byte1[i] == 1){
-      digitalWrite(MIDIOutPin, HIGH);
-      Serial.print(1);
-    }
-    else{
-      digitalWrite(MIDIOutPin, LOW);
-      Serial.print(0);
-    }
-    delayMicroseconds(baudDelayMicroseconds);
-  }
-  digitalWrite(MIDIOutPin, HIGH);
-  Serial.println(1);
-  delayMicroseconds(baudDelayMicroseconds);
+  delay(delayBeats);
+  // Transmit MIDI message
+  transmitMIDI(statusByte);
+  transmitMIDI(dataByte1);
+  transmitMIDI(dataByte2);
+}
 
-//send second byte
-  
-  digitalWrite(13, LOW);
+void transmitMIDI(byte midiByte) {
+  // Start bit (LOW)
+  digitalWrite(MIDIOutPin, LOW);
   delayMicroseconds(baudDelayMicroseconds);
-  for(int i = 0; i<8; i++){
-    if (byte2[i] == 1){
-      digitalWrite(MIDIOutPin, HIGH);    
+  //8 data bits
+  for (int i = 0; i < 8; i++) {
+    if (midiByte & (1 << i)) {
+      digitalWrite(MIDIOutPin, HIGH);   
     }
-    else{
+    else {
       digitalWrite(MIDIOutPin, LOW);
     }
     delayMicroseconds(baudDelayMicroseconds);
   }
-  digitalWrite(MIDIOutPin, HIGH);
-  delayMicroseconds(baudDelayMicroseconds);
-
-//send third byte
-  
-  digitalWrite(13, LOW);
-  delayMicroseconds(baudDelayMicroseconds);
-  for(int i = 0; i<8; i++){
-    if (byte3[i] == 1){
-      digitalWrite(MIDIOutPin, HIGH);    
-    }
-    else{
-      digitalWrite(MIDIOutPin, LOW);
-    }
-    delayMicroseconds(baudDelayMicroseconds);
-  }
+  // Stop bit (HIGH)
   digitalWrite(MIDIOutPin, HIGH);
   delayMicroseconds(baudDelayMicroseconds);
 }
 
-/*
-void byteTransmit(sendByte){
-  digitalWrite()
-  delayMicroseconds(baudDelayMicroseconds)
-  for(int i = 0; i<8; i++){
-    if (byte1[i] == 1){
-      //kick drum - solenoid
-    }
-    else{
-
-}
-*/
