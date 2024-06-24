@@ -1,7 +1,5 @@
 //by @jeremyscook 6/24/2024
-//could go through different modes/BPM via onboard button???
-//hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
-//current version compiles, but not physically tested
+// Compiles, but MIDI message output is off
 
 // define MIDI message bytes
 
