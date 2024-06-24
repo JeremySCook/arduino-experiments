@@ -1,7 +1,7 @@
 // Based on Arduino software serial library found here: https://docs.arduino.cc/learn/built-in-libraries/software-serial/
 // Modified by @JeremySCook for MIDI usage - plays C3 every second
 // MIDI pin 5 hooked up to TX pin 11, RX not needed here.
-// Sends a signal, but not generally exactly correct
+// Works with write, print gives different results
 
 #include <SoftwareSerial.h>
 
@@ -21,8 +21,8 @@ void setup()  {
 }
 
 void loop() {
-    mySerial.print(0x90);
-    mySerial.print(0x3C);
-    mySerial.print(0x7F);
+    mySerial.write(0x90);
+    mySerial.write(0x3C);
+    mySerial.write(0x7F); //why write, not print? Works perfectly w/ write, not w/ print
     delay(2000); 
 }
