@@ -1,8 +1,9 @@
 //by @jeremyscook 6/24/2024
-//gives a result to MIDI monitor software, but not correct
-//need to look at this further
+//could go through different modes/BPM via onboard button???
+//hits onboard solenoids to act as a high hat, use SSRs to actuate solenoids
+//current version compiles, but not physically tested
 
-int baudRate = 32150;
+int baudRate = 31250;
 int baudDelayMicroseconds = ((1.0/baudRate)*1000000);
 int delayBeats = 1000; //delay between playing a note in milliseconds
 int MIDIOutPin = 13;
