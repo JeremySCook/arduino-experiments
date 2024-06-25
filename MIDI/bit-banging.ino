@@ -1,5 +1,5 @@
 //by @jeremyscook 6/24/2024
-// Compiles, but MIDI message output is off
+// Compiles, looks good to logic analyzer, but works poorly on actual MIDI hardware/untested in current version.
 
 // define MIDI message bytes
 
@@ -13,16 +13,16 @@ const byte dataByte2 = B01111111; //0x7F;  // Velocity (127)
 
 // define MIDI transmission variables
 
-const int MIDIOutPin = 13;
+const int MIDIOutPin = 11;
 const int baudRate = 31250;
 const int baudDelayMicroseconds = (1000000 / baudRate); //calculate delay in microseconds
-const int delayBeats = 1000; //delay between playing a note in milliseconds
+const int delayBeats = 2000; //delay between playing a note in milliseconds
 
 //Arduino Uno Pin 13 attached to MIDI pin X through 220 ohm resistor
 //Arduino +5V attached to MIDI pin x through 220 ohm resistor
 
 void setup() {
-pinMode(13, OUTPUT);
+pinMode(MIDIOutPin, OUTPUT);
 digitalWrite(MIDIOutPin, HIGH);
 
 // Initialize serial for debugging if needed
