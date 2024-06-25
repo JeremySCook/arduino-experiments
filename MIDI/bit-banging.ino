@@ -43,7 +43,7 @@ void transmitMIDI(byte midiByte) {
   digitalWrite(MIDIOutPin, LOW);
   delayMicroseconds(baudDelayMicroseconds);
   //8 data bits
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) { //why does this transmit LSB first? Does the 1 << i go from right to left??
     if (midiByte & (1 << i)) {
       digitalWrite(MIDIOutPin, HIGH);   
     }
