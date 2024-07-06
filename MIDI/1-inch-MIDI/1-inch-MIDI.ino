@@ -37,22 +37,20 @@ void loop() {
     else if (SIG2Value > 500) {noteInputStatus[2] == 1;}
     else {noteInputStatus[2] == 0; noteInputStatus[3] == 0;}
 
-/*
-    if (SIG1Value > 800 && noteStatus[0] == 0) {
-    midi2.sendNoteOn(noteValue[0], 127, 1);
-    noteStatus[0] = 1;
-    }
-    else if (SIG1Value > 500 && noteStatus[1] == 0) {
-    midi2.sendNoteOn(noteVaue[1], 127, 1);
-    noteStatus[1] = 1;
-    }
-*/   
-    
-    midi2.sendNoteOn(60, 127, 1);
+for (int i = 0; i < 4; i++) {
+  if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
+    midi2.sendNoteOn(noteValue[i], 127, 1);
+    noteStatus[i] = 1;
+    digitalWrite(LEDOut, HIGH); 
+    delay(10);
     digitalWrite(LEDOut, HIGH);
-    delay(1000);
-    // Send a MIDI Note Off message (Note, Velocity, Channel)
-    midi2.sendNoteOff(60, 0, 1);
+  }
+  else if (noteInputStatus[i == 0] && noteStatus[i] == 1) {
+    midi2.sendNoteOff(noteValue[i], 0, 1);
+    noteStatus[i] = 0;
+    digitalWrite(LEDOut, HIGH);
+    delay(10);
     digitalWrite(LEDOut, LOW);
-    delay(1000);
+  }
+  }
 }
