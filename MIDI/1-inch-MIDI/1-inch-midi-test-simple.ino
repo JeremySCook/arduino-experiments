@@ -2,6 +2,9 @@
 
 Programmed 1 inch MIDI at 1 MHz, 3.3V
 Works, blinking intermittently
+sends C3 velocity 127 when programmed at 8 MHz (Jul 10th)
+could potentially still work at 1 MHz as the external LED
+was switched to not light up when transmitting
 
 */
 
@@ -27,8 +30,10 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(LEDOut, HIGH);  // turn the LED on (HIGH is the voltage level)
-  snore(10);                      // wait for a second
+  midi2.sendNoteOn(60, 127, 1); //sends middle C over and over
+  snore(5);
+  digitalWrite(LEDOut, HIGH);
+  snore(5);                      // wait for a second
   digitalWrite(LEDOut, LOW);   // turn the LED off by making the voltage LOW
   snore(1000);                      // wait for a second
 }
