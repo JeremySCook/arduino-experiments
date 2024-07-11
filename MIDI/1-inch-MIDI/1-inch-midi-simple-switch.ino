@@ -6,7 +6,7 @@ sends C3 velocity 127 when programmed at 8 MHz (Jul 10th)
 could potentially still work at 1 MHz as the external LED
 was switched to not light up when transmitting
 
-//triggers LED and MIDI in current form, but reading is meta event
+//Works at 8 MHz, does not work at 1 MHz
 
 */
 
@@ -43,7 +43,6 @@ void loop() {
     digitalWrite(LEDOut, HIGH);
     snore(5);
     digitalWrite(LEDOut, LOW);
-    snore(50);
   } 
   else if (SIG1Value < 201 && noteStatus == 1){
     midi2.sendNoteOff(60, 127, 1); //sends middle C off
@@ -52,7 +51,6 @@ void loop() {
     digitalWrite(LEDOut, HIGH);
     snore(5);
     digitalWrite(LEDOut, LOW);
-    snore(50);
   }
-  snore(100); //polls every 10ms, sleeps otherwise
+  snore(50); //polls every 50ms, sleeps otherwise
 }
