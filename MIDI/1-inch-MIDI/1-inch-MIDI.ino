@@ -8,7 +8,7 @@ Works! Jul 10th, 2024 @JeremySCook
 #include <tinysnore.h>
 
 #define MIDIOut 0
-#define MIDIIn 5 // Reset pin acts as dummy since not needed?
+#define MIDIIn 5 // Reset pin acts as dummy since not needed - tried 99, didn't function correctly
 #define LEDOut 1
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
