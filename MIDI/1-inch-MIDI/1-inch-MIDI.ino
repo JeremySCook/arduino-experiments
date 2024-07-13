@@ -30,15 +30,18 @@ void setup() {
 
 void loop() {
     // Send a MIDI Note On message (Note, Velocity, Channel)
+    
     int SIG1Value = analogRead(SIG1);
-    if (SIG1Value > 700) {noteInputStatus[1] = 1;}
+    noteInputStatus[0] = 0; noteInputStatus[1] = 0; //turns button status off by default
+    if (SIG1Value > 800) {noteInputStatus[0] = 1; noteInputStatus[1] = 1;}
+    else if (SIG1Value > 700) {noteInputStatus[1] = 1;}
     else if (SIG1Value > 100) {noteInputStatus[0] = 1;}
-    else {noteInputStatus[0] = 0; noteInputStatus[1] = 0;}
     
     int SIG2Value = analogRead(SIG2);
-    if (SIG2Value > 700) {noteInputStatus[3] = 1;}
+    noteInputStatus[2] = 0; noteInputStatus[3] = 0; //turns button status off by default    
+    if (SIG2Value > 800) {noteInputStatus[2] = 1; noteInputStatus[3] = 1;}
+    else if (SIG2Value > 700) {noteInputStatus[3] = 1;}
     else if (SIG2Value > 100) {noteInputStatus[2] = 1;}
-    else {noteInputStatus[2] = 0; noteInputStatus[3] = 0;}
 
 for (int i = 0; i < 4; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
