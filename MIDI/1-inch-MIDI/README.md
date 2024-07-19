@@ -1,4 +1,4 @@
-1 inch MIDI
+1 inch MIDI - Video: https://www.youtube.com/watch?v=5Ws_JfCw5NY
 
 ![image](1-inch-midi.png)
 
