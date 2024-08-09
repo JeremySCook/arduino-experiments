@@ -11,6 +11,7 @@ int lightValue = 2; //2 is off in this case, 1 on
 int lightPin= 13; //onboard LED is 13, can be changed if needed
 int buttonPin = 3;
 bool buttonToggle = 0;
+bool buttonValue = 0;
 
 void setup() {
   pinMode(lightPin, OUTPUT);
@@ -19,9 +20,9 @@ void setup() {
   auxSerial.begin(9600);
 }
 void loop() {
-  if (Serial.available()) {
+  if (Serial.available() > 0) {
     lightValue = Serial.parseInt();
-    Serial.println(lightValue);
+    //Serial.println(lightValue);
     if (lightValue == 1) {
       digitalWrite(lightPin, HIGH);
       Serial.println("LED ON PER SERIAL");
@@ -32,8 +33,11 @@ void loop() {
       Serial.println("LED OFF PER SERIAL");
       auxSerial.print(lightValue); //re-transmits value received
     }
+  //Serial.flush(); //flush the serial buffer to enable button usage after serial received
+  Serial.end();
+  Serial.begin(9600);
   }
-  bool buttonValue = digitalRead(buttonPin);
+  buttonValue = digitalRead(buttonPin);
   if(buttonValue == 0 && lightValue == 1 && buttonToggle == 0) {
     digitalWrite(lightPin, 0);
     lightValue = 2; // 2 = OFF
@@ -49,7 +53,7 @@ void loop() {
     buttonToggle = 1; // button has been pressed down
   }
   if(buttonValue == 1 && buttonToggle == 1){
-    buttonToggle = 0; // button has been released
+    buttonToggle = 0; //button has transitioned from down do up, averts multiple inputs
   }
   delay(50);
 }
