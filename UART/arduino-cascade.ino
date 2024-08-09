@@ -33,7 +33,7 @@ void loop() {
       Serial.println("LED OFF PER SERIAL");
       auxSerial.print(lightValue); //re-transmits value received
     }
-  //Serial.flush(); //flush the serial buffer to enable button usage after serial received
+  //Serial.flush(); did not work, used end/begin below
   Serial.end();
   Serial.begin(9600);
   }
