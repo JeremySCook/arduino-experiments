@@ -26,6 +26,6 @@ void loop() {
   int buttonState = digitalRead(BTN_USER);
   // print out the state of the button:
   Serial.println(buttonState);
-  Serial1.println(buttonState);
+  Serial1.println(buttonState+1);
   delay(100);  // delay in between reads for stability
 }
