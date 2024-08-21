@@ -16,6 +16,7 @@
 void setup() {
   pinMode(A0, OUTPUT);
   pinMode(A2, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(A0, HIGH);
   digitalWrite(A2, LOW);
   // initialize serial communication at 9600 bits per second:
@@ -26,7 +27,16 @@ void setup() {
 void loop() {
   // read the input on analog pin 0:
   int sensorValue = analogRead(A1);
+  int sensorAnalog = map(sensorValue, 3, 1020, 0, 9); // 3 to 1020 to account for imperfect values @ top & bottom
+
+  // PWM LED based on mapped input value:
+  // analogWrite(LED_BUILTIN, sensorAnalog); does not seem to work on Pro Mini, wrote analog function below:
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(sensorAnalog);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(9 - sensorAnalog); //10 levels including 0 for off
+
   // print out the value you read:
-  Serial.println(sensorValue);
-  delay(10);  // delay in between reads for stability
+  Serial.print(sensorValue); Serial.print("  "); Serial.println(sensorAnalog);
+  delay(1);  // delay in between reads for stability
 }
