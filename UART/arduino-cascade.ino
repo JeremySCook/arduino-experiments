@@ -6,7 +6,7 @@
 // Can use multiple boards to create a cascade of inputs/outputs
 
 #include <SoftwareSerial.h>
-SoftwareSerial auxSerial(5, 6); // RX (purple), TX (blue)
+SoftwareSerial auxSerial(5, 6); // RX (yellow), TX (blue)
 int lightValue = 2; //2 is off in this case, 1 on
 int lightPin= 13; //onboard LED is 13, can be changed if needed
 int buttonPin = 3;
