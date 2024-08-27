@@ -27,7 +27,7 @@ void setup() {
 void loop() {
   // read the input on analog pin 0:
   int sensorValue = analogRead(A1);
-  int sensorAnalog = map(sensorValue, 3, 1020, 0, 9); // 3 to 1020 to account for imperfect values @ top & bottom
+  int sensorAnalog = map(sensorValue, 8, 1015, 0, 9); // 8 to 1015 to account for imperfect values @ top & bottom
 
   // PWM LED based on mapped input value:
   // analogWrite(LED_BUILTIN, sensorAnalog); does not seem to work on Pro Mini, wrote analog function below:
