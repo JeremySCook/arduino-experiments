@@ -1,5 +1,6 @@
 /*
 Works! Jul 10th, 2024 @JeremySCook
+Use ATtiny85 @ 8 MHz Internal clock
 New code w/ potentiometer beat trigger compiles, but untested Aug 20th, 2024 @JeremySCook
 */
 
@@ -13,12 +14,12 @@ New code w/ potentiometer beat trigger compiles, but untested Aug 20th, 2024 @Je
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
 #define POTPIN 4
-#define NOTEDELAY 2
-#define POLLDELAY 40 //snore to save power before registering inputs
+#define NOTEDELAY 5
+#define POLLDELAY 20 //snore to save power before registering inputs
 
 bool noteInputStatus[] = {0,0,0,0};
 bool noteStatus[] = {0,0,0,0};
-int noteValue[] = {60, 62, 67, 69}; // C3, D3, G3 (notes for CAGE)
+int noteValue[] = {60, 62, 67, 69}; // C3, D3, G3, A3 (notes for CAGE)
 //bool beatSelect = 0;
 unsigned long beatTime;
 //int beatDelay = 500; //time between beats
@@ -32,7 +33,7 @@ void setup() {
     // Initialize SoftwareSerial
     mySerial.begin(31250); // MIDI baud rate
     pinMode(LEDOut, OUTPUT);
-    pinMode(POTPIN, INPUT_PULLUP);
+    //pinMode(POTPIN, INPUT_PULLUP);
 }
 
 void loop() {
@@ -41,15 +42,15 @@ beat();
     // Send a MIDI Note On message (Note, Velocity, Channel)
     int SIG1Value = analogRead(SIG1);
     noteInputStatus[0] = 0; noteInputStatus[1] = 0; //turns button status off by default
-    if (SIG1Value > 800) {noteInputStatus[0] = 1; noteInputStatus[1] = 1;}
-    else if (SIG1Value > 700) {noteInputStatus[1] = 1;}
-    else if (SIG1Value > 100) {noteInputStatus[0] = 1;}
+    if (SIG1Value > 832) {noteInputStatus[0] = 1; noteInputStatus[1] = 1;}
+    else if (SIG1Value > 751) {noteInputStatus[1] = 1;}
+    else if (SIG1Value > 500) {noteInputStatus[0] = 1;}
     
     int SIG2Value = analogRead(SIG2);
     noteInputStatus[2] = 0; noteInputStatus[3] = 0; //turns button status off by default    
-    if (SIG2Value > 800) {noteInputStatus[2] = 1; noteInputStatus[3] = 1;}
-    else if (SIG2Value > 700) {noteInputStatus[3] = 1;}
-    else if (SIG2Value > 100) {noteInputStatus[2] = 1;}
+    if (SIG2Value > 832) {noteInputStatus[2] = 1; noteInputStatus[3] = 1;}
+    else if (SIG2Value > 751) {noteInputStatus[3] = 1;}
+    else if (SIG2Value > 500) {noteInputStatus[2] = 1;}
 
 for (int i = 0; i < 4; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
