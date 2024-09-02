@@ -14,12 +14,13 @@ New code w/ potentiometer beat trigger compiles, but untested Aug 20th, 2024 @Je
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
 #define POTPIN 4
-#define NOTEDELAY 5
+#define NOTEDELAY 1
 #define POLLDELAY 20 //snore to save power before registering inputs
+#define debounceDelayValue 50 //time in miliseconds to position fingers
 
-bool noteInputStatus[] = {0,0,0,0};
-bool noteStatus[] = {0,0,0,0};
-int noteValue[] = {60, 62, 67, 69}; // C3, D3, G3, A3 (notes for CAGE)
+bool noteInputStatus[] = {0,0,0,0,0,0};
+bool noteStatus[] = {0,0,0,0,0,0};
+int noteValue[] = {57, 62, 60, 52, 55, 53}; // 
 //bool beatSelect = 0;
 unsigned long beatTime;
 //int beatDelay = 500; //time between beats
@@ -38,21 +39,23 @@ void setup() {
 
 void loop() {
 
-beat();
-    // Send a MIDI Note On message (Note, Velocity, Channel)
+//beat();
+
+debounceDelay(); //time to settle on button(s) pushed
+
     int SIG1Value = analogRead(SIG1);
-    noteInputStatus[0] = 0; noteInputStatus[1] = 0; //turns button status off by default
-    if (SIG1Value > 832) {noteInputStatus[0] = 1; noteInputStatus[1] = 1;}
+    noteInputStatus[0] = 0; noteInputStatus[1] = 0; noteInputStatus[2] = 0; //turns button status off by default
+    if (SIG1Value > 832) {noteInputStatus[2] = 1;}
     else if (SIG1Value > 751) {noteInputStatus[1] = 1;}
     else if (SIG1Value > 500) {noteInputStatus[0] = 1;}
     
     int SIG2Value = analogRead(SIG2);
-    noteInputStatus[2] = 0; noteInputStatus[3] = 0; //turns button status off by default    
-    if (SIG2Value > 832) {noteInputStatus[2] = 1; noteInputStatus[3] = 1;}
-    else if (SIG2Value > 751) {noteInputStatus[3] = 1;}
-    else if (SIG2Value > 500) {noteInputStatus[2] = 1;}
+    noteInputStatus[3] = 0; noteInputStatus[4] = 0; noteInputStatus[5] = 0; //turns button status off by default    
+    if (SIG2Value > 832) {noteInputStatus[5] = 1;}
+    else if (SIG2Value > 751) {noteInputStatus[4] = 1;}
+    else if (SIG2Value > 500) {noteInputStatus[3] = 1;}
 
-for (int i = 0; i < 4; i++) {
+for (int i = 0; i < 6; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
     midi2.sendNoteOn(noteValue[i], 127, 1);
     noteStatus[i] = 1;
@@ -69,6 +72,19 @@ for (int i = 0; i < 4; i++) {
   }
   }
   snore(POLLDELAY); //polls every 50ms, sleeps otherwise
+}
+
+
+
+void debounceDelay(){
+  for (int i = 0; i < 6; i++){
+  noteInputStatus[i] = 0; //set values to zero by default
+  }
+  int SIG1Value = analogRead(SIG1);
+  int SIG2Value = analogRead(SIG1);
+  if(SIG1Value > 100 || SIG2Value > 100){
+    snore(debounceDelayValue);
+  }
 }
 
 //scale bpm from 80 to 160 ==> a delay of 60/80 to 60/160 seconds ==> .75 seconds - .375 seconds
