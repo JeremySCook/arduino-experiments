@@ -1,7 +1,7 @@
 /*
 Works! Jul 10th, 2024 @JeremySCook
 Use ATtiny85 @ 8 MHz Internal clock
-New code w/ potentiometer beat trigger compiles, but untested Aug 20th, 2024 @JeremySCook
+New code w/ potentiometer working, but needs further examination 9/2/2024 @JeremySCook
 */
 
 #include <MIDI.h>
@@ -13,8 +13,8 @@ New code w/ potentiometer beat trigger compiles, but untested Aug 20th, 2024 @Je
 #define LEDOut 1
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
-#define POTPIN 4
-#define NOTEDELAY 1
+#define POTPIN 2
+#define NOTEDELAY 20
 #define POLLDELAY 20 //snore to save power before registering inputs
 #define debounceDelayValue 50 //time in miliseconds to position fingers
 
@@ -39,7 +39,7 @@ void setup() {
 
 void loop() {
 
-//beat();
+beat();
 
 debounceDelay(); //time to settle on button(s) pushed
 
@@ -93,16 +93,17 @@ void debounceDelay(){
 //by 10 otherwise
 
 void beat(){
-  int PotMap = map(analogRead(POTPIN), 0, 1023, 5, 12);
-  int BPMMap = PotMap*10; // scales mapped value up to a BPM value
-  int beatDelay = (60*1000/BPMMap); // gives a value in milliseconds between each beat
-  
-  if (BPMMap > 50){ //take out low values to turn off
+  int PotMap = map(analogRead(POTPIN), 0, 1023, 0, 3);
+  int BPM[] = {0, 60, 90, 120}; //
+
+  if (BPM[PotMap] > 0){ //take out low values to turn off
+    int beatDelay = (60000/8/BPM[PotMap]); // value in ms for each beat /8 compensates for 8MHz clock
     if (millis() - beatTime >= beatDelay){
     midi2.sendNoteOn(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     beatTime = millis();
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
+    midi2.sendNoteOff(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     digitalWrite(LEDOut, LOW);
   }
   }
