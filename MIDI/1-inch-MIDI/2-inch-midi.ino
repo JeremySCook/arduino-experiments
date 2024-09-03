@@ -21,9 +21,10 @@ New code w/ potentiometer working, but needs further examination 9/2/2024 @Jerem
 bool noteInputStatus[] = {0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0};
 int noteValue[] = {57, 62, 60, 52, 55, 53}; // 
-//bool beatSelect = 0;
+bool beatOn = 0;
 unsigned long beatTime;
-//int beatDelay = 500; //time between beats
+int beatHold = 50; //how long in ms until beat is turned off
+
 //int beatTime = 0;//also need a millis time that can be used between loops? beatTime
 
 // Define the SoftwareSerial port
@@ -94,17 +95,23 @@ void debounceDelay(){
 
 void beat(){
   int PotMap = map(analogRead(POTPIN), 0, 1023, 0, 3);
-  int BPM[] = {0, 60, 90, 120}; //
+  int BPM[] = {120, 90, 60, 0}; //
 
   if (BPM[PotMap] > 0){ //take out low values to turn off
-    int beatDelay = (60000/8/BPM[PotMap]); // value in ms for each beat /8 compensates for 8MHz clock
+    int beatDelay = (3750/BPM[PotMap]); // value in ms for each beat 3750 is 60000/16 to compensate for 16MHz clock
     if (millis() - beatTime >= beatDelay){
     midi2.sendNoteOn(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     beatTime = millis();
+    beatOn = 1;
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
-    midi2.sendNoteOff(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     digitalWrite(LEDOut, LOW);
+  }
+  if (beatOn == 1){
+    if ((millis() - beatTime) >= beatHold){
+      midi2.sendNoteOff(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
+      beatOn == 0;
+    }
   }
   }
 
