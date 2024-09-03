@@ -1,7 +1,7 @@
 /*
 Works! Jul 10th, 2024 @JeremySCook
 Use ATtiny85 @ 8 MHz Internal clock
-New code w/ potentiometer working, if buttons are pressed and held it slows down beat, need to examine further.
+New code w/ potentiometer working, 9/3/2024 @JeremySCook
 */
 
 #include <MIDI.h>
@@ -16,7 +16,7 @@ New code w/ potentiometer working, if buttons are pressed and held it slows down
 #define POTPIN 2
 #define NOTEDELAY 20
 #define POLLDELAY 20 //snore to save power before registering inputs
-#define debounceDelayValue 50 //time in miliseconds to position fingers
+#define debounceDelayValue 60 //time in miliseconds to position fingers
 
 bool noteInputStatus[] = {0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0};
@@ -72,7 +72,7 @@ for (int i = 0; i < 6; i++) {
     digitalWrite(LEDOut, LOW);
   }
   }
-  snore(POLLDELAY); //polls every 50ms, sleeps otherwise
+  snore(POLLDELAY); //polls every XXms, sleeps otherwise
 }
 
 
@@ -82,8 +82,8 @@ void debounceDelay(){
   noteInputStatus[i] = 0; //set values to zero by default
   }
   int SIG1Value = analogRead(SIG1);
-  int SIG2Value = analogRead(SIG1);
-  if(SIG1Value > 100 || SIG2Value > 100){
+  int SIG2Value = analogRead(SIG2);
+  if(SIG1Value > 50 || SIG2Value > 50){
     snore(debounceDelayValue);
   }
 }
@@ -99,19 +99,20 @@ void beat(){
 
   if (PotMap > 200){ //take out low values to turn off
     int beatDelay = (80000/PotMap); //
-    if (millis() - beatTime >= beatDelay){ //examine this - need another ()??
-    midi2.sendNoteOn(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
+    if ((millis() - beatTime) >= beatDelay && beatOn == 0){
+    midi2.sendNoteOn(40, 90, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     beatTime = millis();
     beatOn = 1;
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
   }
-  if (beatOn == 1){
-    if ((millis() - beatTime) >= beatHold){
-      midi2.sendNoteOff(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
-      beatOn == 0;
-    }
+  if ((millis() - beatTime) >= beatHold && beatOn == 1){
+    midi2.sendNoteOff(40, 90, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
+    beatOn = 0;
+    digitalWrite(LEDOut, HIGH); 
+    snore(NOTEDELAY);
+    digitalWrite(LEDOut, LOW);
   }
   }
 
