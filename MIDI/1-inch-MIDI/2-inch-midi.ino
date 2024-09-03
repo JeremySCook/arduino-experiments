@@ -94,11 +94,11 @@ void debounceDelay(){
 //by 10 otherwise
 
 void beat(){
-  int PotMap = map(analogRead(POTPIN), 0, 1023, 0, 3);
-  int BPM[] = {120, 90, 60, 0}; //
+  int PotMap = map(analogRead(POTPIN), 0, 1023, 1000, 100);
+  //int BPM[] = {120, 90, 60, 0}; //
 
-  if (BPM[PotMap] > 0){ //take out low values to turn off
-    int beatDelay = (3750/BPM[PotMap]); // value in ms for each beat 3750 is 60000/16 to compensate for 16MHz clock
+  if (PotMap > 200){ //take out low values to turn off
+    int beatDelay = (80000/PotMap); //
     if (millis() - beatTime >= beatDelay){
     midi2.sendNoteOn(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     beatTime = millis();
