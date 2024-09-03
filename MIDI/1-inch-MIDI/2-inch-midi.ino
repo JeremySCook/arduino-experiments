@@ -1,7 +1,7 @@
 /*
 Works! Jul 10th, 2024 @JeremySCook
 Use ATtiny85 @ 8 MHz Internal clock
-New code w/ potentiometer working, but needs further examination 9/2/2024 @JeremySCook
+New code w/ potentiometer working, if buttons are pressed and held it slows down beat, need to examine further.
 */
 
 #include <MIDI.h>
@@ -99,7 +99,7 @@ void beat(){
 
   if (PotMap > 200){ //take out low values to turn off
     int beatDelay = (80000/PotMap); //
-    if (millis() - beatTime >= beatDelay){
+    if (millis() - beatTime >= beatDelay){ //examine this - need another ()??
     midi2.sendNoteOn(40, 127, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
     beatTime = millis();
     beatOn = 1;
