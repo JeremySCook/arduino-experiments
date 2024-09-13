@@ -14,7 +14,7 @@ New code w/ potentiometer working, 9/3/2024 @JeremySCook
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
 #define POTPIN 2
-#define NOTEDELAY 20
+#define NOTEDELAY 1 //delay between LED on/off after sending signal
 #define POLLDELAY 20 //snore to save power before registering inputs
 #define debounceDelayValue 60 //time in miliseconds to position fingers
 
