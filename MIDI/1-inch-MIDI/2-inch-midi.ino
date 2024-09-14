@@ -18,6 +18,7 @@ New code w/ potentiometer working, 9/3/2024 @JeremySCook
 #define POLLDELAY 10 //snore to save power before registering inputs
 #define debounceDelayValue 30 //time in miliseconds to position fingers
 #define pitchBendIntensity 3000 //intensity of pitch bends -8192 to 8192 is range of bend
+#define pitchBendSteps 8000
 
 bool noteInputStatus[] = {0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0};
@@ -27,6 +28,7 @@ unsigned long beatTime;
 int beatHold = 50; //how long in ms until beat is turned off
 int pitchBendValue = 0; //start value for pitch bends
 int pitchBendValueNew = 0; //new pitch bend value
+int pitchBendZeroValue;
 bool pitchUpActive = 0;
 bool pitchDownActive = 0;
 
@@ -41,25 +43,27 @@ void setup() {
     mySerial.begin(31250); // MIDI baud rate
     pinMode(LEDOut, OUTPUT);
     //pinMode(POTPIN, INPUT_PULLUP);
+    //pitchBendZeroValue = map(analogRead(POTPIN), 0, 1023, -pitchBendSteps, pitchBendSteps);
 }
 
 void loop() {
 
 //beat();
-bend(); //pitch bend
+//bend(); //pitch bend
+bendAbsolute();
 debounceDelay(); //time to settle on button(s) pushed
 
     int SIG1Value = analogRead(SIG1);
     noteInputStatus[0] = 0; noteInputStatus[1] = 0; noteInputStatus[2] = 0; //turns button status off by default
     if (SIG1Value > 832) {noteInputStatus[2] = 1;}
     else if (SIG1Value > 751) {noteInputStatus[1] = 1;}
-    else if (SIG1Value > 500) {noteInputStatus[0] = 1;}
+    else if (SIG1Value > 500) {noteInputStatus[0] = 1;} //both SIG1 buttons pushed (I think)
     
     int SIG2Value = analogRead(SIG2);
     noteInputStatus[3] = 0; noteInputStatus[4] = 0; noteInputStatus[5] = 0; //turns button status off by default    
     if (SIG2Value > 832) {noteInputStatus[5] = 1;}
     else if (SIG2Value > 751) {noteInputStatus[4] = 1;}
-    else if (SIG2Value > 500) {noteInputStatus[3] = 1;}
+    else if (SIG2Value > 500) {noteInputStatus[3] = 1;} //both SIG1 buttons pushed (I think)
 
 for (int i = 0; i < 6; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
@@ -152,5 +156,17 @@ void bend(){
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
     snore(NOTEDELAY);
+  }
+}
+
+void bendAbsolute(){
+  pitchBendValueNew = map(analogRead(POTPIN), 0, 1023, pitchBendSteps, -pitchBendSteps);
+  if ((pitchBendValueNew > (pitchBendValue + 50)) || (pitchBendValueNew < (pitchBendValue - 50)))  {
+    midi2.sendPitchBend(pitchBendValueNew, 1);
+    pitchBendValue = pitchBendValueNew;
+    digitalWrite(LEDOut, HIGH); 
+    snore(NOTEDELAY);
+    digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY); //delay after to potentially regain energy???
   }
 }
