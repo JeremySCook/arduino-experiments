@@ -14,9 +14,10 @@ New code w/ potentiometer working, 9/3/2024 @JeremySCook
 #define SIG1 1 // ADC Pin 1, corresponds to PB2
 #define SIG2 3
 #define POTPIN 2
-#define NOTEDELAY 1 //delay between LED on/off after sending signal
-#define POLLDELAY 20 //snore to save power before registering inputs
-#define debounceDelayValue 60 //time in miliseconds to position fingers
+#define NOTEDELAY 5 //delay between LED on/off after sending signal
+#define POLLDELAY 10 //snore to save power before registering inputs
+#define debounceDelayValue 30 //time in miliseconds to position fingers
+#define pitchBendIntensity 3000 //intensity of pitch bends -8192 to 8192 is range of bend
 
 bool noteInputStatus[] = {0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0};
@@ -24,6 +25,10 @@ int noteValue[] = {57, 62, 60, 52, 55, 53}; //
 bool beatOn = 0;
 unsigned long beatTime;
 int beatHold = 50; //how long in ms until beat is turned off
+int pitchBendValue = 0; //start value for pitch bends
+int pitchBendValueNew = 0; //new pitch bend value
+bool pitchUpActive = 0;
+bool pitchDownActive = 0;
 
 //int beatTime = 0;//also need a millis time that can be used between loops? beatTime
 
@@ -40,8 +45,8 @@ void setup() {
 
 void loop() {
 
-beat();
-
+//beat();
+bend(); //pitch bend
 debounceDelay(); //time to settle on button(s) pushed
 
     int SIG1Value = analogRead(SIG1);
@@ -58,18 +63,25 @@ debounceDelay(); //time to settle on button(s) pushed
 
 for (int i = 0; i < 6; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
+    midi2.sendPitchBend(0, 1); //resets the pitch bend
     midi2.sendNoteOn(noteValue[i], 127, 1);
     noteStatus[i] = 1;
+    pitchUpActive = 0; //not sure if these pitch ups are needed, but doesn't work without the other set
+    pitchDownActive = 0;
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY); //delay after to potentially regain energy???
   }
   else if (noteInputStatus[i] == 0 && noteStatus[i] == 1) {
     midi2.sendNoteOff(noteValue[i], 0, 1);
     noteStatus[i] = 0;
+    pitchUpActive = 0;
+    pitchDownActive = 0;
     digitalWrite(LEDOut, HIGH);
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY); //delay after to potentially regain energy???
   }
   }
   snore(POLLDELAY); //polls every XXms, sleeps otherwise
@@ -106,6 +118,7 @@ void beat(){
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY); //delay after to potentially regain energy???
   }
   if ((millis() - beatTime) >= beatHold && beatOn == 1){
     midi2.sendNoteOff(40, 90, 1); // electric snare per general MIDI drum map, could use different instrument (last value)?
@@ -113,7 +126,31 @@ void beat(){
     digitalWrite(LEDOut, HIGH); 
     snore(NOTEDELAY);
     digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY); //delay after to potentially regain energy???
   }
   }
+}
 
+void bend(){
+  pitchBendValueNew = map(analogRead(POTPIN), 0, 1023, -25, 25);
+  if ((pitchBendValueNew > (pitchBendValue + 1)) && (pitchDownActive == 0)){
+    midi2.sendPitchBend(-pitchBendIntensity, 1);
+    pitchBendValue = pitchBendValueNew;
+    pitchDownActive = 1;
+    pitchUpActive = 0;
+    digitalWrite(LEDOut, HIGH); 
+    snore(NOTEDELAY);
+    digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY);
+  }
+  else if ((pitchBendValueNew < (pitchBendValue - 1)) && (pitchUpActive == 0)){
+    midi2.sendPitchBend(pitchBendIntensity, 1);
+    pitchBendValue = pitchBendValueNew;
+    pitchDownActive = 0;
+    pitchUpActive = 1;   
+    digitalWrite(LEDOut, HIGH); 
+    snore(NOTEDELAY);
+    digitalWrite(LEDOut, LOW);
+    snore(NOTEDELAY);
+  }
 }
