@@ -15,8 +15,8 @@ New code w/ potentiometer working, 9/3/2024 @JeremySCook
 #define SIG2 3
 #define POTPIN 2
 #define NOTEDELAY 5 //delay between LED on/off after sending signal
-#define POLLDELAY 10 //snore to save power before registering inputs
-#define debounceDelayValue 30 //time in miliseconds to position fingers
+#define POLLDELAY 30 //snore to save power before registering inputs
+#define debounceDelayValue 40 //time in miliseconds to position fingers
 #define pitchBendIntensity 3000 //intensity of pitch bends -8192 to 8192 is range of bend
 #define pitchBendSteps 8000
 
@@ -67,7 +67,7 @@ debounceDelay(); //time to settle on button(s) pushed
 
 for (int i = 0; i < 6; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
-    midi2.sendPitchBend(0, 1); //resets the pitch bend
+    //midi2.sendPitchBend(0, 1); //resets the pitch bend
     midi2.sendNoteOn(noteValue[i], 127, 1);
     noteStatus[i] = 1;
     pitchUpActive = 0; //not sure if these pitch ups are needed, but doesn't work without the other set
@@ -109,7 +109,7 @@ void debounceDelay(){
 //use map function to scale between 5 and 12 in order to create set steps - do not execute at 5, multiply
 //by 10 otherwise
 
-void beat(){
+void beat(){ //not currently used
   int PotMap = map(analogRead(POTPIN), 0, 1023, 1000, 100);
   //int BPM[] = {120, 90, 60, 0}; //
 
@@ -135,7 +135,7 @@ void beat(){
   }
 }
 
-void bend(){
+void bend(){ //not currently used
   pitchBendValueNew = map(analogRead(POTPIN), 0, 1023, -25, 25);
   if ((pitchBendValueNew > (pitchBendValue + 1)) && (pitchDownActive == 0)){
     midi2.sendPitchBend(-pitchBendIntensity, 1);
@@ -161,7 +161,10 @@ void bend(){
 
 void bendAbsolute(){
   pitchBendValueNew = map(analogRead(POTPIN), 0, 1023, pitchBendSteps, -pitchBendSteps);
-  if ((pitchBendValueNew > (pitchBendValue + 50)) || (pitchBendValueNew < (pitchBendValue - 50)))  {
+  if ((pitchBendValueNew > -800) && (pitchBendValueNew < 800)){
+    pitchBendValueNew = 0; //set a dead zone
+  }
+  if ((pitchBendValueNew > (pitchBendValue + 100)) || (pitchBendValueNew < (pitchBendValue - 100)))  {
     midi2.sendPitchBend(pitchBendValueNew, 1);
     pitchBendValue = pitchBendValueNew;
     digitalWrite(LEDOut, HIGH); 
