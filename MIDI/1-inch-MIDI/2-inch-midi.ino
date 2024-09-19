@@ -16,13 +16,13 @@ New code w/ potentiometer working, 9/3/2024 @JeremySCook
 #define POTPIN 2
 #define NOTEDELAY 5 //delay between LED on/off after sending signal
 #define POLLDELAY 30 //snore to save power before registering inputs
-#define debounceDelayValue 40 //time in miliseconds to position fingers
+#define debounceDelayValue 50 //time in miliseconds to position fingers
 #define pitchBendIntensity 3000 //intensity of pitch bends -8192 to 8192 is range of bend
 #define pitchBendSteps 8000
 
 bool noteInputStatus[] = {0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0};
-int noteValue[] = {57, 62, 60, 52, 55, 53}; // 
+int noteValue[] = {57, 60, 62, 63, 64, 67}; // ordered from lowest to highest 
 bool beatOn = 0;
 unsigned long beatTime;
 int beatHold = 50; //how long in ms until beat is turned off
@@ -55,15 +55,15 @@ debounceDelay(); //time to settle on button(s) pushed
 
     int SIG1Value = analogRead(SIG1);
     noteInputStatus[0] = 0; noteInputStatus[1] = 0; noteInputStatus[2] = 0; //turns button status off by default
-    if (SIG1Value > 832) {noteInputStatus[2] = 1;}
-    else if (SIG1Value > 751) {noteInputStatus[1] = 1;}
-    else if (SIG1Value > 500) {noteInputStatus[0] = 1;} //both SIG1 buttons pushed (I think)
+    if (SIG1Value > 832) {noteInputStatus[1] = 1;} // SW1 & SW2 depressed (middle position)
+    else if (SIG1Value > 751) {noteInputStatus[0] = 1;} // SW1 depressed
+    else if (SIG1Value > 500) {noteInputStatus[2] = 1;} // SW2 depressed
     
     int SIG2Value = analogRead(SIG2);
     noteInputStatus[3] = 0; noteInputStatus[4] = 0; noteInputStatus[5] = 0; //turns button status off by default    
-    if (SIG2Value > 832) {noteInputStatus[5] = 1;}
-    else if (SIG2Value > 751) {noteInputStatus[4] = 1;}
-    else if (SIG2Value > 500) {noteInputStatus[3] = 1;} //both SIG1 buttons pushed (I think)
+    if (SIG2Value > 832) {noteInputStatus[4] = 1;} // SW3 & SW4 depressed (middle position)
+    else if (SIG2Value > 751) {noteInputStatus[3] = 1;} // SW3 depressed
+    else if (SIG2Value > 500) {noteInputStatus[5] = 1;} // SW4 depressed
 
 for (int i = 0; i < 6; i++) {
   if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
