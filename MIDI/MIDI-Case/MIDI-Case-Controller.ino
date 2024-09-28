@@ -21,11 +21,13 @@ bool noteInputStatus[] = {0,0,0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0,0,0};
 int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3, C4
 
-bool auxRightButtonStatus = 1; //pullup, so pushed is 0, not pushed is 1
 bool beatOn = 0;
-#define BEATHOLD 1000 //how long in ms between beats?
+bool noteOff = 0;
+#define BEATHOLD 500 //how long to hold each beat?
+#define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 # define AUXDEBOUNCE 500
+int buttonStep = 0;
 
 bool bendStatus = 0;
 
@@ -51,6 +53,7 @@ void setup() {
 
 void loop() {
 pitchBend();
+buttonSequence();
 autoBeat();
 
 for (int i = 0; i <8; i++) {
@@ -107,29 +110,57 @@ void pitchBend(){
     delay(NOTEDELAY);
   }
 }
-
-void autoBeat(){ //This routine still needs some work - goes on, but never goes off
-  auxRightButtonStatus = digitalRead(auxRightButton);
-    if(auxRightButtonStatus == 0 && beatOn == 0){  
+void buttonSequence(){
+  if(buttonStep == 0){
+    if(digitalRead(auxRightButton) == 0){
+      buttonStep = 1;
       beatOn = 1;
-      delay(AUXDEBOUNCE); //debounce delay - could use a better technique?
+      delay(10);
     }
-    else if(auxRightButtonStatus == 0 && beatOn == 1) {
-      beatOn = 0;
-      MIDI.sendNoteOff(48, 127, 1); //use velocity 0 to signal not off
+  }
+  if(buttonStep == 1){
+    if(digitalRead(auxRightButton) == 1){
+      buttonStep = 2;
+      beatOn = 1;
+      delay(10);
+    }    
+  }
+  if(buttonStep == 2){
+    if(digitalRead(auxRightButton) == 0){ //button depressed, turn off beat
+      MIDI.sendNoteOff(48, 63, 1);
       digitalWrite(auxRightLight, HIGH);
       delay(NOTEDELAY);
       digitalWrite(auxRightLight, LOW);
-      delay(AUXDEBOUNCE); //debounce delay - use a better technique?
-      //Serial.println("Auto Beat Off");
+      buttonStep = 3;
+      beatOn = 0;
+      delay(10);
     }
+  }
+  if(buttonStep == 3){
+    if(digitalRead(auxRightButton) == 1) //button back up
+      buttonStep = 0;
+      beatOn = 0;
+      delay(10);
+  }
+
+}
+
+void autoBeat(){ //This routine still needs some work - goes on, but never goes off
     if(beatOn == 1){
-        if((millis() - previousMillis) > BEATHOLD){
-          MIDI.sendNoteOn(48, 127, 1);   
+        if((millis() - previousMillis) > BEATTIME){
+          MIDI.sendNoteOn(48, 63, 1);
+          noteOff = 0;  
           digitalWrite(auxRightLight, HIGH);
           delay(NOTEDELAY);
           digitalWrite(auxRightLight, LOW);
           previousMillis = millis(); 
+        }
+        else if(((millis() - previousMillis) > BEATHOLD) && noteOff == 0){
+          MIDI.sendNoteOff(48, 63, 1);
+          noteOff = 1;
+          digitalWrite(auxRightLight, HIGH);
+          delay(NOTEDELAY);
+          digitalWrite(auxRightLight, LOW);
         }
     }
 }
