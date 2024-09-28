@@ -25,6 +25,7 @@ bool auxRightButtonStatus = 1; //pullup, so pushed is 0, not pushed is 1
 bool beatOn = 0;
 #define BEATHOLD 1000 //how long in ms between beats?
 unsigned long previousMillis = 0;
+# define AUXDEBOUNCE 500
 
 bool bendStatus = 0;
 
@@ -50,7 +51,7 @@ void setup() {
 
 void loop() {
 pitchBend();
-//autoBeat();
+autoBeat();
 
 for (int i = 0; i <8; i++) {
   if (digitalRead(noteSequence[i]) == 0){ //0 when depressed
@@ -109,19 +110,22 @@ void pitchBend(){
 
 void autoBeat(){ //This routine still needs some work - goes on, but never goes off
   auxRightButtonStatus = digitalRead(auxRightButton);
-    if(auxRightButtonStatus == 0 && beatOn == 0){
+    if(auxRightButtonStatus == 0 && beatOn == 0){  
       beatOn = 1;
-      delay(200); //debounce delay - could use a better technique?
+      delay(AUXDEBOUNCE); //debounce delay - could use a better technique?
     }
     else if(auxRightButtonStatus == 0 && beatOn == 1) {
       beatOn = 0;
-      MIDI.sendNoteOff(48, 127, 1);
-      delay(200); //debounce delay - use a better technique?
+      MIDI.sendNoteOff(48, 127, 1); //use velocity 0 to signal not off
+      digitalWrite(auxRightLight, HIGH);
+      delay(NOTEDELAY);
+      digitalWrite(auxRightLight, LOW);
+      delay(AUXDEBOUNCE); //debounce delay - use a better technique?
       //Serial.println("Auto Beat Off");
     }
     if(beatOn == 1){
         if((millis() - previousMillis) > BEATHOLD){
-          MIDI.sendNoteOn(48, 63, 1);   
+          MIDI.sendNoteOn(48, 127, 1);   
           digitalWrite(auxRightLight, HIGH);
           delay(NOTEDELAY);
           digitalWrite(auxRightLight, LOW);
