@@ -20,9 +20,10 @@ int noteSequence[] = {button5, button6, button7, button8, button4, button3, butt
 bool noteInputStatus[] = {0,0,0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0,0,0};
 int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3, C4
+
 bool beatOn = 0;
 unsigned long beatTime;
-int beatHold = 50; //how long in ms until beat is turned off
+int beatHold = 500; //how long in ms until beat is turned off
 
 bool bendStatus = 0;
 
@@ -42,12 +43,14 @@ void setup() {
   pinMode(auxRightButton, INPUT_PULLUP);
   pinMode(auxRightLight, OUTPUT);
 
-
+  //Serial.begin(9600);
   MIDI.begin(1); //Launch MIDI on channel 1
 }
 
 void loop() {
 pitchBend();
+autoBeat();
+
 for (int i = 0; i <8; i++) {
   if (digitalRead(noteSequence[i]) == 0){ //0 when depressed
     noteInputStatus[i] = 1;
@@ -60,6 +63,7 @@ for (int i = 0; i <8; i++) {
 for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
     MIDI.sendNoteOn(noteValue[i], 127, 1);
+    //Serial.print("Note Sent: "); Serial.println(noteValue[i]);
     noteStatus[i] = 1;
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
@@ -71,6 +75,7 @@ for (int i = 0; i <8; i++) {
 for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 0 && noteStatus[i] == 1) {
     MIDI.sendNoteOff(noteValue[i], 127, 1);
+    //Serial.print("Note Off: "); Serial.println(noteValue[i]);
     noteStatus[i] = 0;
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
@@ -83,6 +88,7 @@ for (int i = 0; i <8; i++) {
 void pitchBend(){
   if(digitalRead(auxLeftButton) == 0 && bendStatus == 0){ //button depressed not bent
     MIDI.sendPitchBend(4500, 1);
+    //Serial.println("Pitch Bend On");
     bendStatus = 1;
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
@@ -91,10 +97,36 @@ void pitchBend(){
   }
   else if(digitalRead(auxLeftButton) == 1 && bendStatus == 1){ //button released and bent
     MIDI.sendPitchBend(0, 1);
+    //Serial.println("Pitch Bend Off");
     bendStatus = 0;
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
     digitalWrite(auxRightLight, LOW);
     delay(NOTEDELAY);
   }
+}
+
+void autoBeat(){ //This routine still needs some work - goes on, but never goes off
+    if(digitalRead(auxRightButton) == 0 && beatOn == 0){
+      beatOn = 1;
+      //Serial.println("Auto Beat On");
+    }
+    else if(digitalRead(auxRightButton) == 0 && beatOn == 1) {
+      beatOn = 0;
+      //Serial.println("Auto Beat Off");
+    }
+    if(beatOn == 1){
+        MIDI.sendNoteOn(60, 127, 1);
+        digitalWrite(auxRightLight, HIGH);
+        delay(NOTEDELAY);
+        digitalWrite(auxRightLight, LOW);
+        //Serial.println("Auto Beat note on sent");
+        delay(beatHold);
+        MIDI.sendNoteOff(60, 127, 1);
+        digitalWrite(auxRightLight, HIGH);
+        delay(NOTEDELAY);
+        digitalWrite(auxRightLight, LOW);
+        //Serial.println("Auto Beat note off sent");
+        delay(beatHold);
+    }
 }
