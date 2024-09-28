@@ -76,7 +76,7 @@ for(int i = 0; i < 8; i++){
     stsolidExp.digitalWrite(pitchSSDMap[i], HIGH);
   }
 }
-stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
+stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS-
 }
 
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
@@ -84,28 +84,12 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
-
   Serial.print("Pitch Off "); Serial.println(pitch);
 
-/* Took out display code per apparant I2C conflict
-  display.clearDisplay();
-  display.write("Pitch off: "); display.write(pitch);
-*/
-
-    if (pitch == 60) { // hex 3C, note 3C
-      stsolidExp.digitalWrite(0, LOW);
-      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
+for(int i = 0; i < 8; i++){
+  if (pitch == pitchInputValue[i]){
+    stsolidExp.digitalWrite(pitchSSDMap[i], LOW);
   }
-    else if (pitch == 61) { // hex 3E, note 3D
-      stsolidExp.digitalWrite(1, LOW);
-      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
-    }
-    else if (pitch == 62) { // hex 3E, note 3D
-      stsolidExp.digitalWrite(2, LOW);
-      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
-  }
-    else if (pitch == 63) { // hex 3E, note 3D
-      stsolidExp.digitalWrite(3, LOW);
-      stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
-    }
+}
+stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 }
