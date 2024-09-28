@@ -8,7 +8,10 @@
 #define button6 7
 #define button7 8
 #define button8 9
-#define auxButton 10
+#define auxLeftButton 10
+#define auxLeftLight 11 //not used, wired to 5V, but could be in the future
+#define auxRightButton 12
+#define auxRightLight 13 //same as LED_BUILTIN
 
 #define NOTEDELAY 5 //delay
 
@@ -26,7 +29,6 @@ bool bendStatus = 0;
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(button1, INPUT_PULLUP);
   pinMode(button2, INPUT_PULLUP);
   pinMode(button3, INPUT_PULLUP);
@@ -35,7 +37,11 @@ void setup() {
   pinMode(button6, INPUT_PULLUP);
   pinMode(button7, INPUT_PULLUP);
   pinMode(button8, INPUT_PULLUP);
-  pinMode(auxButton, INPUT_PULLUP);
+  pinMode(auxLeftButton, INPUT_PULLUP);
+  pinMode(auxLeftLight, OUTPUT);
+  pinMode(auxRightButton, INPUT_PULLUP);
+  pinMode(auxRightLight, OUTPUT);
+
 
   MIDI.begin(1); //Launch MIDI on channel 1
 }
@@ -55,9 +61,9 @@ for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
     MIDI.sendNoteOn(noteValue[i], 127, 1);
     noteStatus[i] = 1;
-    digitalWrite(LED_BUILTIN, HIGH); 
+    digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(auxRightLight, LOW);
     delay(NOTEDELAY);
   }
 }
@@ -66,29 +72,29 @@ for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 0 && noteStatus[i] == 1) {
     MIDI.sendNoteOff(noteValue[i], 127, 1);
     noteStatus[i] = 0;
-    digitalWrite(LED_BUILTIN, HIGH); 
+    digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(auxRightLight, LOW);
     delay(NOTEDELAY);
  }
 }
 }
 
 void pitchBend(){
-  if(digitalRead(auxButton) == 0 && bendStatus == 0){ //button depressed not bent
+  if(digitalRead(auxLeftButton) == 0 && bendStatus == 0){ //button depressed not bent
     MIDI.sendPitchBend(4500, 1);
     bendStatus = 1;
-    digitalWrite(LED_BUILTIN, HIGH); 
+    digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(auxRightLight, LOW);
     delay(NOTEDELAY);
   }
-  else if(digitalRead(auxButton) == 1 && bendStatus == 1){ //button released and bent
+  else if(digitalRead(auxLeftButton) == 1 && bendStatus == 1){ //button released and bent
     MIDI.sendPitchBend(0, 1);
     bendStatus = 0;
-    digitalWrite(LED_BUILTIN, HIGH); 
+    digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(auxRightLight, LOW);
     delay(NOTEDELAY);
   }
 }
