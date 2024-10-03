@@ -19,18 +19,27 @@ void setup() {
   OptaController.begin(); //maybe needed for SSR expansion? Not sure.
   stsolidExp = OptaController.getExpansion(0); //expansion at index 0 is solid state relay needed???
 
-  display.clearDisplay(); //TAKE THIS OUT AND RUNS (BUT DOES NOTHING W/ SSD1306)
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  
+  display.clearDisplay();
   display.setTextSize(1);      // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE); // Draw white text
   display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(false);         // Use full 256 char 'Code Page 437' fon
+  display.cp437(true);         // Use full 256 char 'Code Page 437' fon
   display.setRotation(0); //rotates the screen 90 degrees
 
 }
 
 void loop() { // Main loop
+  display.print("HELLO OPTA");
+  display.display(); //Update the screen with message
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
   delay(1000);                      // wait for a second
+  //display.clearDisplay();
   digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
   delay(1000);                      // wait for a second
 }
