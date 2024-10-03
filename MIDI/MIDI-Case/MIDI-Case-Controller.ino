@@ -27,7 +27,7 @@ bool noteOff = 0;
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 # define AUXDEBOUNCE 500
-int buttonStep = 0;
+int buttonState = 0;
 
 bool bendStatus = 0;
 
@@ -111,34 +111,34 @@ void pitchBend(){
   }
 }
 void buttonSequence(){
-  if(buttonStep == 0){
+  if(buttonState == 0){
     if(digitalRead(auxRightButton) == 0){
-      buttonStep = 1;
+      buttonState = 1;
       beatOn = 1;
       delay(10);
     }
   }
-  if(buttonStep == 1){
+  if(buttonState == 1){
     if(digitalRead(auxRightButton) == 1){
-      buttonStep = 2;
+      buttonState = 2;
       beatOn = 1;
       delay(10);
     }    
   }
-  if(buttonStep == 2){
+  if(buttonState == 2){
     if(digitalRead(auxRightButton) == 0){ //button depressed, turn off beat
       MIDI.sendNoteOff(48, 63, 1);
       digitalWrite(auxRightLight, HIGH);
       delay(NOTEDELAY);
       digitalWrite(auxRightLight, LOW);
-      buttonStep = 3;
+      buttonState = 3;
       beatOn = 0;
       delay(10);
     }
   }
-  if(buttonStep == 3){
+  if(buttonState == 3){
     if(digitalRead(auxRightButton) == 1) //button back up
-      buttonStep = 0;
+      buttonState = 0;
       beatOn = 0;
       delay(10);
   }
