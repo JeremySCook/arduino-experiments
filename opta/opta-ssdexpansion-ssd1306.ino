@@ -24,7 +24,8 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
-  
+  display.display();
+  delay(2000);
   display.clearDisplay();
   display.setTextSize(1);      // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE); // Draw white text
@@ -38,7 +39,7 @@ void loop() { // Main loop
   display.print("HELLO OPTA");
   display.display(); //Update the screen with message
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(1000);                      // wait for a second
+  delay(2000);                      // wait for a second
   //display.clearDisplay();
   digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
   delay(1000);                      // wait for a second
