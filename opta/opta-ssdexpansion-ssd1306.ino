@@ -1,3 +1,9 @@
+/*
+Demo code for use with Arduino Opta, SSR exapnsion, and AUX adapter with SSD1306 OLED screen
+Opta AUX adapter available for purchase here: https://www.tindie.com/products/35482
+@JeremySCook Oct 3, 2024
+*/
+
 #include <SPI.h> //needed??
 #include <Wire.h>
 
