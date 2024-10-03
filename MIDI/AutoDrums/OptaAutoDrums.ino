@@ -8,7 +8,6 @@
 #include <SPI.h> //needed??
 #include <Wire.h>
 
-/* Took out display code per apparant I2C conflict
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -16,7 +15,6 @@
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-*/
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -35,14 +33,20 @@ void setup() {
   stsolidExp = OptaController.getExpansion(0); //expansion at index 0 is solid state relay needed???
   pinMode (LED_BUILTIN, OUTPUT); // Set Arduino board pin 13 to output
 
-/* Took out display code per apparant I2C conflict
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  display.display();
+  delay(500);
   display.clearDisplay();
   display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
+  display.setTextColor(WHITE, BLACK); // Draw white text, fill background
   display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' fon
+  display.cp437(true);       // Use full 256 char 'Code Page 437' fon
   display.setRotation(1); //rotates the screen 90 degrees
-*/
+  display.display();
   
   midiOpta.begin(MIDI_CHANNEL_OMNI); // Initialize the Midi Library.
   // OMNI sets it to listen to all channels.. MIDI.begin(2) would set it 
@@ -57,7 +61,6 @@ void setup() {
 void loop() { // Main loop
   midiOpta.read(); // Continuously check if Midi data has been received.
 }
-
 // MyHandleNoteON is the function that will be called by the Midi Library
 // when a MIDI NOTE ON message is received.
 // It will be passed bytes for Channel, Pitch, and Velocity
@@ -66,10 +69,12 @@ void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   Serial.print("Pitch On "); Serial.println(pitch);
 
-/* Took out display code per apparant I2C conflict
-  display.clearDisplay();
-  display.write("Pitch on: "); display.write(pitch);
-*/
+  //display.clearDisplay();
+  //display.setTextColor(WHITE, BLACK);
+  display.setCursor(0, 10);
+  display.print("PCH ON  "); display.print(pitch);
+  display.display();
+
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -85,6 +90,12 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS-
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
   Serial.print("Pitch Off "); Serial.println(pitch);
+
+  //display.clearDisplay();
+  //display.setTextColor(WHITE, BLACK);
+  display.setCursor(0, 10);
+  display.print("PCH OFF "); display.print(pitch);
+  display.display();
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
