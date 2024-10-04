@@ -1,9 +1,6 @@
 
 //For Arduino Opta input w/ SSRs
-//Compiled but untested as of Sept 18, 2024
-//Add code to show MIDI signals on OLED via new custom adapter?
-
-//setup for SSD1306 module - need splash screen etc?
+//Oct 3, 2024, Works somewhat, need to get scrolling working on SSD1306 @JeremySCook
 
 #include <SPI.h> //needed??
 #include <Wire.h>
@@ -15,6 +12,11 @@
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+//3 lines below used to scroll messages, not yet implemented
+String messageType[] = {"_______", "PCH OFF", "PCH ON "};
+int messageTypeValue[] = {0, 0, 0, 0, 0, 0, 0, 0};
+int messageValue[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -43,6 +45,7 @@ void setup() {
   display.clearDisplay();
   display.setTextSize(1);      // Normal 1:1 pixel scale
   display.setTextColor(WHITE, BLACK); // Draw white text, fill background
+  display.setTextWrap(false);
   display.setCursor(0, 0);     // Start at top-left corner
   display.cp437(true);       // Use full 256 char 'Code Page 437' fon
   display.setRotation(1); //rotates the screen 90 degrees
@@ -69,12 +72,11 @@ void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   Serial.print("Pitch On "); Serial.println(pitch);
 
-  //display.clearDisplay();
-  //display.setTextColor(WHITE, BLACK);
+  /*
   display.setCursor(0, 10);
   display.print("PCH ON  "); display.print(pitch);
   display.display();
-
+  */
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -90,12 +92,12 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS-
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
   Serial.print("Pitch Off "); Serial.println(pitch);
-
-  //display.clearDisplay();
-  //display.setTextColor(WHITE, BLACK);
+  /*
   display.setCursor(0, 10);
   display.print("PCH OFF "); display.print(pitch);
   display.display();
+  */
+  scrollValues(messageTypeValue, pitch);
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -103,4 +105,10 @@ for(int i = 0; i < 8; i++){
   }
 }
 stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
+}
+
+void scrollValues(int arr[], int pitch1){ //still experimental, will expand to scroll
+  display.setCursor(0, 10);
+  display.print(arr[0]); display.print(" x "); display.print(pitch1);
+  display.display();
 }
