@@ -1,6 +1,9 @@
 
 //For Arduino Opta input w/ SSRs
-//Oct 3, 2024, Works somewhat, need to get scrolling working on SSD1306 @JeremySCook
+//Compiled but untested as of Sept 18, 2024
+//Add code to show MIDI signals on OLED via new custom adapter?
+
+//setup for SSD1306 module - need splash screen etc?
 
 #include <SPI.h> //needed??
 #include <Wire.h>
@@ -14,9 +17,10 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //3 lines below used to scroll messages, not yet implemented
-String messageType[] = {"_______", "PCH OFF", "PCH ON "};
-int messageTypeValue[] = {0, 0, 0, 0, 0, 0, 0, 0};
-int messageValue[] = {0, 0, 0, 0, 0, 0, 0, 0};
+String messageType[] = {"_______", "PCH ON ", "PCH OFF"};
+# define LINES_LENGTH 11
+int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0};
+int messageValue[LINES_LENGTH] = {127, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0};
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -72,11 +76,7 @@ void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   Serial.print("Pitch On "); Serial.println(pitch);
 
-  /*
-  display.setCursor(0, 10);
-  display.print("PCH ON  "); display.print(pitch);
-  display.display();
-  */
+  scrollValues(1, pitch); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -92,12 +92,7 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS-
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
   Serial.print("Pitch Off "); Serial.println(pitch);
-  /*
-  display.setCursor(0, 10);
-  display.print("PCH OFF "); display.print(pitch);
-  display.display();
-  */
-  scrollValues(messageTypeValue, pitch);
+  scrollValues(2, pitch); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -107,8 +102,19 @@ for(int i = 0; i < 8; i++){
 stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 }
 
-void scrollValues(int arr[], int pitch1){ //still experimental, will expand to scroll
-  display.setCursor(0, 10);
-  display.print(arr[0]); display.print(" x "); display.print(pitch1);
+void scrollValues(int messageTypeValue0, int pitch1){
+
+  for(int i = (LINES_LENGTH - 1); i > -1; i--){
+    messageTypeValue[i + 1] = messageTypeValue[i];
+    messageValue[i + 1] = messageValue[i]; //wrong message values are displayed
+  }
+  messageTypeValue[0] = messageTypeValue0;
+  messageValue[0] = pitch1;
+
+  for(int i = 0; i < LINES_LENGTH; i++){
+  display.setCursor(0, (10 + i*10));
+  display.print(messageType[messageTypeValue[i]]); display.print(" "); 
+  display.print(messageValue[i]);
+  }
   display.display();
 }
