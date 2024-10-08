@@ -134,7 +134,7 @@ void storeValues(int messageTypeValue0, int pitch1){
 void scrollValues(){
 
   for(int i = 0; i < LINES_LENGTH; i++){
-  display.setCursor(0, (10 + i*10));
+  display.setCursor(0, (12 + i*10));
   display.print(messageType[messageTypeValue[i]]); display.print(" "); 
   display.print(messageValue[i]); display.print("    "); //last display to clear any blanks on end
   }
