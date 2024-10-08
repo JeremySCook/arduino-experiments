@@ -113,6 +113,9 @@ void storeValues(int messageTypeValue0, int pitch1){
   messageValue[1] = messageValue[0];
   messageValue[0] = pitch1;
 
+  messageTypeValue[9] = messageTypeValue[8];
+  messageTypeValue[8] = messageTypeValue[7];
+  messageTypeValue[7] = messageTypeValue[6];
   messageTypeValue[6] = messageTypeValue[5];
   messageTypeValue[5] = messageTypeValue[4];
   messageTypeValue[4] = messageTypeValue[3];
