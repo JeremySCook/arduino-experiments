@@ -18,9 +18,9 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //3 lines below used to scroll messages, not yet implemented
 String messageType[] = {"_______", "PCH ON ", "PCH OFF"};
-# define LINES_LENGTH 11
-int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0};
-int messageValue[LINES_LENGTH] = {127, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0};
+# define LINES_LENGTH 10
+int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0};
+int messageValue[LINES_LENGTH] = {127, 0, 222, 0, 64, 0, 0, 0, 0, 0};
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -75,7 +75,8 @@ void loop() { // Main loop
 void MyHandleNoteOn(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   Serial.print("Pitch On "); Serial.println(pitch);
-  scrollValues(1, pitch); //message type, pitch/note
+  storeValues(1, pitch);
+  scrollValues(); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -91,7 +92,8 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS-
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
   Serial.print("Pitch Off "); Serial.println(pitch);
-  scrollValues(2, pitch); //message type, pitch/note
+  storeValues(2, pitch);
+  scrollValues(); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -101,9 +103,36 @@ for(int i = 0; i < 8; i++){
 stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 }
 
-void scrollValues(int messageTypeValue0, int pitch1){
-  display.setCursor(0, 0);
+void storeValues(int messageTypeValue0, int pitch1){
+
+  messageValue[6] = messageValue[5];
+  messageValue[5] = messageValue[4]; 
+  messageValue[4] = messageValue[3];
+  messageValue[3] = messageValue[2];
+  messageValue[2] = messageValue[1];
+  messageValue[1] = messageValue[0];
+  messageValue[0] = pitch1;
+
+  messageTypeValue[6] = messageTypeValue[5];
+  messageTypeValue[5] = messageTypeValue[4];
+  messageTypeValue[4] = messageTypeValue[3];
+  messageTypeValue[3] = messageTypeValue[2];
+  messageTypeValue[2] = messageTypeValue[1];
+  messageTypeValue[1] = messageTypeValue[0];
+  messageTypeValue[0] = messageTypeValue0;
+
+}
+
+void scrollValues(){
+  /*display.setCursor(0, 0);
   display.print(messageType[messageTypeValue0]); display.print(" "); 
   display.print(pitch1);
+  display.display();*/
+
+  for(int i = 0; i < LINES_LENGTH; i++){
+  display.setCursor(0, (10 + i*10));
+  display.print(messageType[messageTypeValue[i]]); display.print(" "); 
+  display.print(messageValue[i]); display.print("    "); //last display to clear any blanks on end
+  }
   display.display();
 }
