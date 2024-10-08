@@ -17,10 +17,10 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //3 lines below used to scroll messages, not yet implemented
-String messageType[] = {"_______", "PCH ON ", "PCH OFF"};
-# define LINES_LENGTH 10
-int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0};
-int messageValue[LINES_LENGTH] = {127, 0, 222, 0, 64, 0, 0, 0, 0, 0};
+String messageType[] = {"______", "PC ON ", "PC OFF"}; //6 characters
+# define LINES_LENGTH 11
+int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0};
+int messageValue[LINES_LENGTH] = {127, 0, 222, 0, 64, 0, 0, 0, 0, 0, 0};
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -105,6 +105,10 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 
 void storeValues(int messageTypeValue0, int pitch1){
 
+  messageValue[10] = messageValue[9]; 
+  messageValue[9] = messageValue[8];
+  messageValue[8] = messageValue[7]; 
+  messageValue[7] = messageValue[6]; 
   messageValue[6] = messageValue[5];
   messageValue[5] = messageValue[4]; 
   messageValue[4] = messageValue[3];
@@ -113,6 +117,7 @@ void storeValues(int messageTypeValue0, int pitch1){
   messageValue[1] = messageValue[0];
   messageValue[0] = pitch1;
 
+  messageTypeValue[10] = messageTypeValue[9];
   messageTypeValue[9] = messageTypeValue[8];
   messageTypeValue[8] = messageTypeValue[7];
   messageTypeValue[7] = messageTypeValue[6];
@@ -127,10 +132,6 @@ void storeValues(int messageTypeValue0, int pitch1){
 }
 
 void scrollValues(){
-  /*display.setCursor(0, 0);
-  display.print(messageType[messageTypeValue0]); display.print(" "); 
-  display.print(pitch1);
-  display.display();*/
 
   for(int i = 0; i < LINES_LENGTH; i++){
   display.setCursor(0, (10 + i*10));
