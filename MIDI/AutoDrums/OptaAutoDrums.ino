@@ -75,7 +75,6 @@ void loop() { // Main loop
 void MyHandleNoteOn(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   Serial.print("Pitch On "); Serial.println(pitch);
-
   scrollValues(1, pitch); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
@@ -103,18 +102,8 @@ stsolidExp.updateDigitalOutputs(); //UPDATE SOLID STATE OUTPUTS
 }
 
 void scrollValues(int messageTypeValue0, int pitch1){
-
-  for(int i = (LINES_LENGTH - 1); i > -1; i--){
-    messageTypeValue[i + 1] = messageTypeValue[i];
-    messageValue[i + 1] = messageValue[i]; //wrong message values are displayed
-  }
-  messageTypeValue[0] = messageTypeValue0;
-  messageValue[0] = pitch1;
-
-  for(int i = 0; i < LINES_LENGTH; i++){
-  display.setCursor(0, (10 + i*10));
-  display.print(messageType[messageTypeValue[i]]); display.print(" "); 
-  display.print(messageValue[i]);
-  }
+  display.setCursor(0, 0);
+  display.print(messageType[messageTypeValue0]); display.print(" "); 
+  display.print(pitch1);
   display.display();
 }
