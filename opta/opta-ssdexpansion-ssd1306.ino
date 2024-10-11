@@ -21,6 +21,8 @@ String messageType[] = {"______", "PC ON ", "PC OFF"}; //6 characters
 # define LINES_LENGTH 11
 int messageTypeValue[LINES_LENGTH] = {0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0};
 int messageValue[LINES_LENGTH] = {127, 0, 222, 0, 64, 0, 0, 0, 0, 0, 0};
+unsigned long timeNow = 0; //used for display refresh
+#define REFRESHPERIOD 50 //minimum time between screen refreshes to avoid delays
 
 #include <MIDI.h>  // Add Midi Library
 #include "OptaBlue.h"
@@ -67,6 +69,10 @@ void setup() {
 
 void loop() { // Main loop
   midiOpta.read(); // Continuously check if Midi data has been received.
+  if (millis() > (timeNow + REFRESHPERIOD)){ //added a minimum refresh period to avoid slowdowns
+    scrollValues(); //message type, pitch/note
+    timeNow = millis();
+  }
 }
 // MyHandleNoteON is the function that will be called by the Midi Library
 // when a MIDI NOTE ON message is received.
@@ -76,7 +82,7 @@ void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
   digitalWrite(LED_BUILTIN, HIGH);  //Turn LED on
   //Serial.print("Pitch On "); Serial.println(pitch); -- commented out, seems to delay
   storeValues(1, pitch);
-  scrollValues(); //message type, pitch/note
+
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -93,7 +99,6 @@ void MyHandleNoteOff(byte channel, byte pitch, byte velocity) {
   digitalWrite(LED_BUILTIN,LOW);  //Turn LED off
   //Serial.print("Pitch Off "); Serial.println(pitch); -- commented out, seems to delay
   storeValues(2, pitch);
-  scrollValues(); //message type, pitch/note
 
 for(int i = 0; i < 8; i++){
   if (pitch == pitchInputValue[i]){
@@ -132,11 +137,10 @@ void storeValues(int messageTypeValue0, int pitch1){
 }
 
 void scrollValues(){
-
-  for(int i = 0; i < LINES_LENGTH; i++){
-  display.setCursor(0, (12 + i*10));
-  display.print(messageType[messageTypeValue[i]]); display.print(" "); 
-  display.print(messageValue[i]); display.print("    "); //last display to clear any blanks on end
-  }
+  for (int i = 0; i < LINES_LENGTH; i++){
+    display.setCursor(0, (12 + i*10));
+    display.print(messageType[messageTypeValue[i]]); display.print(" "); 
+    display.print(messageValue[i]); display.print("    "); //last display to clear any blanks on end
+    }
   display.display();
 }
