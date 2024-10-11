@@ -54,9 +54,6 @@ void setup() {
 }
 
 void loop() {
-pitchBend();
-buttonSequence();
-autoBeat();
 
 for (int i = 0; i <8; i++) {
   if (digitalRead(noteSequence[i]) == 0){ //0 when depressed
@@ -66,6 +63,10 @@ for (int i = 0; i <8; i++) {
     noteInputStatus[i] = 0;
   }
 }
+
+pitchBend();
+buttonSequence();
+autoBeatKit();
 
 for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
@@ -142,6 +143,7 @@ void buttonSequence(){
     if(digitalRead(auxRightButton) == 1) //button back up
       buttonState = 0;
       beatOn = 0;
+      beatStep = 0; //reset auto beat seqeunce to step 0 when turned off
       delay(10);
   }
 
@@ -173,7 +175,10 @@ void autoBeatKit(){
   bool sequence2[] = {0,0,1,0,0,0,1,0}; //snare - physical relay fires for snare sound (maybe multiple relays)
 
   if((beatOn == 1) && ((millis() - previousMillis) > BEATTIME)){
-      MIDI.sendNoteOn(48, 63, 1); 
+      //MIDI.sendNoteOn(48, 63, 1);
+    if (sequence0[beatStep] == 1) noteInputStatus[0] = 1;
+    if (sequence1[beatStep] == 1) noteInputStatus[1] = 1;
+    if (sequence2[beatStep] == 1) noteInputStatus[2] = 1;
     beatStep += 1;
     if (beatStep == 8) beatStep = 0; //back to 0 once beatStep exceeds 7
     previousMillis = millis();
