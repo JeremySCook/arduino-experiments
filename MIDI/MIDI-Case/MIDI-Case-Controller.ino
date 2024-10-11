@@ -21,6 +21,7 @@ bool noteInputStatus[] = {0,0,0,0,0,0,0,0};
 bool noteStatus[] = {0,0,0,0,0,0,0,0};
 int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3, C4
 
+//autoBeat variables/constants
 bool beatOn = 0;
 bool noteOff = 0;
 #define BEATHOLD 500 //how long to hold each beat?
@@ -28,6 +29,7 @@ bool noteOff = 0;
 unsigned long previousMillis = 0;
 # define AUXDEBOUNCE 500
 int buttonState = 0;
+int beatStep = 0;
 
 bool bendStatus = 0;
 
@@ -73,7 +75,7 @@ for (int i = 0; i <8; i++) {
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
     digitalWrite(auxRightLight, LOW);
-    delay(NOTEDELAY);
+    //delay(NOTEDELAY); --removed to improve speed
   }
 }
 
@@ -85,7 +87,7 @@ for (int i = 0; i <8; i++) {
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
     digitalWrite(auxRightLight, LOW);
-    delay(NOTEDELAY);
+    //delay(NOTEDELAY); --removed to improve speed
  }
 }
 }
@@ -98,7 +100,7 @@ void pitchBend(){
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
     digitalWrite(auxRightLight, LOW);
-    delay(NOTEDELAY);
+    //delay(NOTEDELAY); --removed to improve speed
   }
   else if(digitalRead(auxLeftButton) == 1 && bendStatus == 1){ //button released and bent
     MIDI.sendPitchBend(0, 1);
@@ -164,3 +166,19 @@ void autoBeat(){ //This routine still needs some work - goes on, but never goes 
         }
     }
 }
+
+void autoBeatKit(){
+  bool sequence0[] = {1,0,1,0,1,0,1,0}; //kick - hit drum with solenoid
+  bool sequence1[] = {1,1,1,1,1,1,1,1}; //hat - hit tumbler with solenoid - USE RELAYS INSTEAD?
+  bool sequence2[] = {0,0,1,0,0,0,1,0}; //snare - physical relay fires for snare sound (maybe multiple relays)
+
+  if((beatOn == 1) && ((millis() - previousMillis) > BEATTIME)){
+      MIDI.sendNoteOn(48, 63, 1); 
+    beatStep += 1;
+    if (beatStep == 8) beatStep = 0; //back to 0 once beatStep exceeds 7
+    previousMillis = millis();
+    }
+}
+
+
+
