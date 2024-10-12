@@ -13,7 +13,7 @@
 #define auxRightButton 12
 #define auxRightLight 13 //same as LED_BUILTIN
 
-#define NOTEDELAY 5 //delay
+#define NOTEDELAY 3 //debounce delay
 
 int noteSequence[] = {button5, button6, button7, button8, button4, button3, button2, button1};
 //above notes arranged from lower left to right, upper left to right
@@ -24,7 +24,7 @@ int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3
 //autoBeat variables/constants
 bool beatOn = 0;
 bool noteOff = 0;
-#define BEATHOLD 500 //how long to hold each beat?
+#define BEATHOLD 20 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 # define AUXDEBOUNCE 500
@@ -63,11 +63,14 @@ for (int i = 0; i <8; i++) {
     noteInputStatus[i] = 0;
   }
 }
-
 pitchBend();
 buttonSequence();
 autoBeatKit();
+MIDINoteOn();
+MIDINoteOff();
+}
 
+void MIDINoteOn(){
 for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 1 && noteStatus[i] == 0) {
     MIDI.sendNoteOn(noteValue[i], 127, 1);
@@ -76,10 +79,11 @@ for (int i = 0; i <8; i++) {
     digitalWrite(auxRightLight, HIGH); 
     delay(NOTEDELAY);
     digitalWrite(auxRightLight, LOW);
-    //delay(NOTEDELAY); --removed to improve speed
   }
 }
+}
 
+void MIDINoteOff(){
 for (int i = 0; i <8; i++) {
     if (noteInputStatus[i] == 0 && noteStatus[i] == 1) {
     MIDI.sendNoteOff(noteValue[i], 127, 1);
@@ -146,27 +150,6 @@ void buttonSequence(){
       beatStep = 0; //reset auto beat seqeunce to step 0 when turned off
       delay(10);
   }
-
-}
-
-void autoBeat(){ //This routine still needs some work - goes on, but never goes off
-    if(beatOn == 1){
-        if((millis() - previousMillis) > BEATTIME){
-          MIDI.sendNoteOn(48, 63, 1);
-          noteOff = 0;  
-          digitalWrite(auxRightLight, HIGH);
-          delay(NOTEDELAY);
-          digitalWrite(auxRightLight, LOW);
-          previousMillis = millis(); 
-        }
-        else if(((millis() - previousMillis) > BEATHOLD) && noteOff == 0){
-          MIDI.sendNoteOff(48, 63, 1);
-          noteOff = 1;
-          digitalWrite(auxRightLight, HIGH);
-          delay(NOTEDELAY);
-          digitalWrite(auxRightLight, LOW);
-        }
-    }
 }
 
 void autoBeatKit(){
@@ -179,11 +162,11 @@ void autoBeatKit(){
     if (sequence0[beatStep] == 1) noteInputStatus[0] = 1;
     if (sequence1[beatStep] == 1) noteInputStatus[1] = 1;
     if (sequence2[beatStep] == 1) noteInputStatus[2] = 1;
+    MIDINoteOn();
     beatStep += 1;
     if (beatStep == 8) beatStep = 0; //back to 0 once beatStep exceeds 7
     previousMillis = millis();
+    delay(BEATHOLD);
+    MIDINoteOff();
     }
 }
-
-
-
