@@ -24,7 +24,7 @@ int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3
 //autoBeat variables/constants
 bool beatOn = 0;
 bool noteOff = 0;
-#define BEATHOLD 20 //how long to hold each auto beat
+#define BEATHOLD 50 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 # define AUXDEBOUNCE 500
