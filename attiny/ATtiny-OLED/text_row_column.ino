@@ -1,3 +1,6 @@
+//Prints text in different aread of 64x128 .96" OLED screen
+//by @jeremyscook - tested w/ ATTiny85, internal 8 MHz clock - Nov 1, 2024
+
 #include <TinyWireM.h>
 #include <Tiny4kOLED.h>
 int delayValue = 500;
