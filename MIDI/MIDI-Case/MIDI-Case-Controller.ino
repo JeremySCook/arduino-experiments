@@ -1,3 +1,7 @@
+//Includes randomNotes function - compiles but untested.
+//Still need to add steps in button sequence to allow it to
+//execute @JeremySCook Nov 6, 2024
+
 #include <MIDI.h>
 
 #define button1 2 //upper-right button
@@ -23,6 +27,8 @@ int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3
 
 //autoBeat variables/constants
 bool beatOn = 0;
+bool randomNotesOn = 0; //turns output notes on at random
+#define RANDOMNOTESTIME 2000 //time between random notes
 bool noteOff = 0;
 #define BEATHOLD 50 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
@@ -66,6 +72,7 @@ for (int i = 0; i <8; i++) {
 pitchBend();
 buttonSequence();
 autoBeatKit();
+randomNotes();
 MIDINoteOn();
 MIDINoteOff();
 }
@@ -167,6 +174,17 @@ void autoBeatKit(){
     if (beatStep == 8) beatStep = 0; //back to 0 once beatStep exceeds 7
     previousMillis = millis();
     delay(BEATHOLD);
-    MIDINoteOff();
+    MIDINoteOff(); //not sure this actually does anything, as it's called anyway in main program
     }
+}
+
+void randomNotes(){
+  if((randomNotesOn == 1) && ((millis() - previousMillis) > RANDOMNOTESTIME)){
+    int randomNoteNumber = random(8); //produces a random value between 0 and 7
+    noteInputStatus[randomNoteNumber] = 1; //turns note corresponding to random note status to 1
+    MIDINoteOn();
+    previousMillis = millis();
+    delay(BEATHOLD);
+    MIDINoteOff(); //not sure this actually does anything, as it's called anyway in main program
+  }
 }
