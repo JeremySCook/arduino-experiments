@@ -33,6 +33,7 @@ bool noteOff = 0;
 #define BEATHOLD 50 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
+unsigned long previousMillis1 = 0;
 # define AUXDEBOUNCE 500
 int buttonState = 0;
 int beatStep = 0;
@@ -147,9 +148,10 @@ void autoBeatKit(){
 void randomNotes(){
   if((randomNotesOn == 1) && ((millis() - previousMillis) > RANDOMNOTESTIME)){
     int randomNoteNumber = random(8); //produces a random value between 0 and 7
-    noteInputStatus[1] = 1; //turns note corresponding to random note status to 1
+    noteInputStatus[randomNoteNumber] = 1; //turns note corresponding to random note status to 1
     MIDINoteOn();
     previousMillis = millis();
+    //MIDI.sendNoteOn(48, 63, 1); //signal
     delay(BEATHOLD);
     digitalWrite(auxRightLight, HIGH);
     delay(NOTEDELAY);
