@@ -30,15 +30,15 @@ bool beatOn = 0;
 bool randomNotesOn = 0; //turns output notes on at random
 #define RANDOMNOTESTIME 2000 //time between random notes
 bool noteOff = 0;
-#define BEATHOLD 50 //how long to hold each auto beat
+#define BEATHOLD 60 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 unsigned long previousMillis1 = 0;
-# define AUXDEBOUNCE 500
+#define AUXDEBOUNCE 500
 int buttonState = 0;
 int beatStep = 0;
-
 bool bendStatus = 0;
+#define SEQUENCEDELAY 20
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
