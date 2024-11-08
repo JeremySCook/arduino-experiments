@@ -29,8 +29,9 @@ int noteValue[] = {60, 62, 64, 65, 67, 69, 71, 72}; //C3, D3, E3, F3, G3, A3, B3
 bool beatOn = 0;
 bool randomNotesOn = 0; //turns output notes on at random
 #define RANDOMNOTESTIME 2000 //time between random notes
+int randomTime = 1000; //randomized delay between random notes
 bool noteOff = 0;
-#define BEATHOLD 60 //how long to hold each auto beat
+#define BEATHOLD 80 //how long to hold each auto beat
 #define BEATTIME 1000 //how long between individual beats?
 unsigned long previousMillis = 0;
 unsigned long previousMillis1 = 0;
@@ -146,16 +147,14 @@ void autoBeatKit(){
 }
 
 void randomNotes(){
-  if((randomNotesOn == 1) && ((millis() - previousMillis) > RANDOMNOTESTIME)){
+  if((randomNotesOn == 1) && ((millis() - previousMillis) > randomTime)){
     int randomNoteNumber = random(8); //produces a random value between 0 and 7
+    randomTime = random(800, 2001);
     noteInputStatus[randomNoteNumber] = 1; //turns note corresponding to random note status to 1
     MIDINoteOn();
     previousMillis = millis();
     //MIDI.sendNoteOn(48, 63, 1); //signal
     delay(BEATHOLD);
-    digitalWrite(auxRightLight, HIGH);
-    delay(NOTEDELAY);
-    digitalWrite(auxRightLight, LOW);
     MIDINoteOff(); //not sure this actually does anything, as it's called anyway in main program
   }
 }
