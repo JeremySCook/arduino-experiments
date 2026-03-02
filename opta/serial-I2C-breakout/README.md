@@ -6,7 +6,8 @@ available here: https://www.tindie.com/products/35482
 ## CODE SNIPPETS IN REPOSITORY
 
 * simple_i2c_textscroll.ino - scrolls different characters across the screen
-* Button response - WIP
+* button_response - responds with YES or NO depending on if button is depressed
+* button_presses.ino - counts the total number of button presses
 
 ## ADAFRUIT EXAMPLE:
 
