@@ -3,3 +3,9 @@ Example code for serial/I2C breakout, available here: https://www.tindie.com/pro
 To run SSD1306 I2C test, insert pins into stagered holes as shown, then load SSD1306_128x64_i2c example  
 from Adafruit SSD1306 library. likely need to Change SCREEN_ADDRESS to 0x3C as shown before compiling/sending  
 to Opta.
+
+![image](https://github.com/JeremySCook/JC-Pro-Macro-2/blob/main/documentation/images/adafruit1.png)
+
+![image](https://github.com/JeremySCook/JC-Pro-Macro-2/blob/main/documentation/images/adafruit2.png)
+
+[![Tech Adjacent](https://img.shields.io/badge/Tech%20Adjacent%20With%20Jeremy%20Cook-[Substack]-blue?style=flat-square&logo=substack)](https://techadjacent.substack.com/)
