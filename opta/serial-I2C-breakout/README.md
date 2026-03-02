@@ -4,8 +4,15 @@ To run SSD1306 I2C test, insert pins into stagered holes as shown, then load SSD
 from Adafruit SSD1306 library. likely need to Change SCREEN_ADDRESS to 0x3C as shown before compiling/sending  
 to Opta.
 
+Step 1: Load example
+
 ![image](adafruit1.png)
 
-![image](https://github.com/JeremySCook/JC-Pro-Macro-2/blob/main/documentation/images/adafruit2.png)
+Step 2: change address (likely needed, depends on model)
+
+![image](adafruit2.png)
+
+Send to Opta!
+
 
 [![Tech Adjacent](https://img.shields.io/badge/Tech%20Adjacent%20With%20Jeremy%20Cook-[Substack]-blue?style=flat-square&logo=substack)](https://techadjacent.substack.com/)
