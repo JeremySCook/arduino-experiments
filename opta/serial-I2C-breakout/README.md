@@ -1,6 +1,7 @@
 Example code for serial/I2C breakout, using SSD1306 OLED display
 available here: https://www.tindie.com/products/35482
 
+![image](ssd1306-2.png)
 
 ## CODE SNIPPETS IN REPOSITORY
 
