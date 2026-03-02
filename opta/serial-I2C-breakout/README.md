@@ -1,3 +1,5 @@
+![image](ssd1306.png)
+
 Example code for serial/I2C breakout, available here: https://www.tindie.com/products/35482
 
 ## CODE SNIPPETS IN REPOSITORY
