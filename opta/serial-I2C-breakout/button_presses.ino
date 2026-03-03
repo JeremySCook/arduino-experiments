@@ -19,7 +19,7 @@
  **************************************************************************/
 /*
 
-Button presses counter CODE FOR ARDUINO OPTA W/ I2C and Serial
+BUTTON_RESPONSE CODE FOR ARDUINO OPTA W/ I2C and Serial
 Aux Breakout W/ SSD1306 128x64 SCREEN - breakout sold on jcdevices.com
 
 */
@@ -45,6 +45,7 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
+  display.setRotation(0); // 0, no rotation; 1, 90; 2 180
   display.display();
   delay(500); // Pause for .5 second
   display.clearDisplay();
@@ -76,5 +77,5 @@ void printPresses(void){
 void drawHeader(void){
   display.setTextSize(1);
   display.setCursor(20, 3);
-  display.print("button pressed?");
+  display.print("presse count:");
 }
