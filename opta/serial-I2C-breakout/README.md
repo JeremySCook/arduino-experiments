@@ -10,7 +10,7 @@ available here: https://www.tindie.com/products/35482
 * **button_presses.ino** - counts the total number of button presses
 * **pcf8574_3xblink.ino** - blinks 3 leds with pcf8574 IO expander
 
-## ADAFRUIT EXAMPLE:
+## ADAFRUIT DISPLAY EXAMPLE:
 
 To run SSD1306 I2C test, insert pins into stagered holes as shown, then load SSD1306_128x64_i2c example  
 from Adafruit SSD1306 library. likely need to Change SCREEN_ADDRESS to 0x3C as shown before compiling/sending  
@@ -24,7 +24,27 @@ Step 2: change address (likely needed, depends on model)
 
 ![image](adafruit2.png)
 
-Send to Opta!
+Send to Opta! 
+
+VIDEO: https://x.com/JeremySCook/status/2028594824698360212
+
+## ADAFRUIT I2C SERVO EXAMPLE (PCA9685)
+
+Step 1: Purchase
+* Adafruit: https://www.adafruit.com/product/815 (untested)
+* Amazon: https://amzn.to/4t4oKs0 (affiliate)
+
+Step 2:
+
+Load Adafruit PWM Servo Library
+
+Step 3:
+
+Load servo example code from library
+
+Step 4:
+
+Attach servo/board/power as shown in video: https://x.com/JeremySCook/status/2035444297412088181
 
 ## SCHEMATIC:
 
