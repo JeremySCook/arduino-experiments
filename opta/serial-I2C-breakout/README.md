@@ -1,5 +1,6 @@
-Example code for serial/I2C breakout, using SSD1306 OLED display
-available here: https://www.tindie.com/products/35482
+## OLED display [available for purchase: Tindie](https://www.tindie.com/products/35482)
+
+## Examples:
 
 ![image](ssd1306-2.png)
 
@@ -8,7 +9,7 @@ available here: https://www.tindie.com/products/35482
 * **simple_i2c_textscroll.ino** - scrolls different characters across the screen
 * **button_response** - responds with YES or NO depending on if button is depressed
 * **button_presses.ino** - counts the total number of button presses
-* **pcf8574_3xblink.ino** - blinks 3 leds with pcf8574 IO expander
+* **pcf8574_3xblink.ino** - blinks 3 leds with pcf8574 IO expander - [VIDEO](https://x.com/JeremySCook/status/2031078158779228430)
 
 ## ADAFRUIT DISPLAY EXAMPLE:
 
@@ -26,13 +27,13 @@ Step 2: change address (likely needed, depends on model)
 
 Send to Opta! 
 
-VIDEO: https://x.com/JeremySCook/status/2028594824698360212
+[VIDEO](https://x.com/JeremySCook/status/2028594824698360212)
 
 ## ADAFRUIT I2C SERVO EXAMPLE (PCA9685)
 
 Step 1: Purchase
-* Adafruit: https://www.adafruit.com/product/815 (untested)
-* Amazon: https://amzn.to/4t4oKs0 (affiliate)
+* [Adafruit](https://www.adafruit.com/product/815) (untested)
+* [Amazon](https://amzn.to/4t4oKs0) (affiliate)
 
 Step 2:
 
@@ -44,7 +45,7 @@ Load servo example code from library
 
 Step 4:
 
-Attach servo/board/power as shown in video: https://x.com/JeremySCook/status/2035444297412088181
+Attach servo/board/power as shown in [VIDEO](https://x.com/JeremySCook/status/2035444297412088181)
 
 ## SCHEMATIC:
 
