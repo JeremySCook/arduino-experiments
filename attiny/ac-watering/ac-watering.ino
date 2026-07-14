@@ -1,24 +1,26 @@
 // add jumper for test routine - faster cycline
 
 #include <tinysnore.h>
+#include <tinyServo85.h>
 
-int LEDneg = 0;
-int LEDpos = 1;
-int servoPin = 2;
-int jumperPin = 3;
-long waterCycle = 86400000; // 86400000 is one full day
+tinyServo85 servo;
+
+static int LED = 0;
+static int servoPin = 2;
+static int jumperPin = 3;
+static int MOSFET = 4;
+long waterCycle = 20000; // 86400000 is one full day
 
 void setup() {
-  pinMode(LEDneg, OUTPUT); // keep this low at all times
-  pinMode(LEDpos, OUTPUT); // switch for off/on
+  pinMode(LED, OUTPUT); // indicator LED
   pinMode(servoPin, OUTPUT);
   pinMode(jumperPin, INPUT_PULLUP);
+  pinMode(MOSFET, OUTPUT);
   if (digitalRead(jumperPin) == LOW) waterCycle = 2000;
- 
-  digitalWrite(LEDneg, LOW); // keep this low at all times
-  digitalWrite(LEDpos, HIGH); // blink on on bootup
+  digitalWrite(MOSFET, HIGH);
+  digitalWrite(LED, HIGH);
   snore(500);
-  digitalWrite(LEDpos, LOW); // blink on on bootup
+  digitalWrite(LED, LOW); // blink on on bootup
   snore(500);
 }
 
@@ -31,25 +33,27 @@ void loop() {
 }
 
 void servoZero() {
-for (int i = 0; i < 100; i++) {
-digitalWrite(LEDpos, HIGH);
-digitalWrite(servoPin, HIGH);
-delayMicroseconds(1000);
-digitalWrite(LEDpos, LOW);
-digitalWrite(servoPin, LOW);
-delayMicroseconds(20000);
-}
+  digitalWrite(MOSFET, LOW);   // Power on
+  digitalWrite(LED, HIGH);
+  delay(500);
+  servo.attachServo(servoPin);
+  servo.setServo(servoPin, 0);       // Move to 0°
+  delay(1500);                 // Allow time to move
+  servo.detachServo(servoPin);       // Stop pulses, pin becomes INPUT
+  digitalWrite(LED, LOW);
+  digitalWrite(MOSFET, HIGH);  // Power off
 }
 
 void servoFull() {
-for (int i = 0; i < 100; i++) {
-digitalWrite(LEDpos, HIGH);
-digitalWrite(servoPin, HIGH);
-delayMicroseconds(2000);
-digitalWrite(LEDpos, LOW);
-digitalWrite(servoPin, LOW);
-delayMicroseconds(20000);
-}
+  digitalWrite(MOSFET, LOW);
+  digitalWrite(LED, HIGH);
+  delay(500);
+  servo.attachServo(servoPin);
+  servo.setServo(servoPin, 180);     // Or try 179
+  delay(1500);
+  servo.detachServo(servoPin);
+  digitalWrite(LED, LOW);
+  digitalWrite(MOSFET, HIGH);
 }
 
 
