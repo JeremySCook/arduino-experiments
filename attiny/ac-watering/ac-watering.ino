@@ -1,4 +1,5 @@
-// add jumper for test routine - faster cycline
+// add jumper for test routine - faster cycling
+// Runs at 16 MHz PLL
 
 #include <tinysnore.h>
 #include <tinyServo85.h>
