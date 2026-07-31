@@ -10,3 +10,5 @@ Examples require [TinySnore by Connor Nishijima](https://github.com/connornishij
 Board is 22 x 22 mm:
 
 ![image](https://github.com/JeremySCook/arduino-experiments/blob/main/attiny/MOSFET-low-power/4-layer.png)
+
+![image](https://github.com/JeremySCook/arduino-experiments/blob/main/attiny/schematic.png)
