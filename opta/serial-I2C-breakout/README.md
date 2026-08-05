@@ -1,4 +1,4 @@
-## OLED display [available for purchase: Tindie](https://www.tindie.com/products/35482)
+## Adapter available [for purchase: on JC Devices](http://jcdevices.com/)
 
 ## Examples:
 
