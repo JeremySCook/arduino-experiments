@@ -1,3 +1,5 @@
+[![Tech Adjacent](https://img.shields.io/badge/Tech%20Adjacent%20With%20Jeremy%20Cook-[Substack]-blue?style=flat-square&logo=substack)](https://techadjacent.substack.com/)
+
 Code for simple web-controlled micro servo robot chassis
 
 * Video (WIP)
