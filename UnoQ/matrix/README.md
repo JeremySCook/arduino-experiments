@@ -3,5 +3,6 @@
 Files for the built-in LED matrix, applied to simple-servo-robot
 
 * matrix-scroll.zip - scrolls simple text across the matrix
+* Robot control app (WIP)
 * Video (WIP)
 * Arduino Writeup (WIP)
