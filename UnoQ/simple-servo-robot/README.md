@@ -2,6 +2,8 @@
 
 Code for simple web-controlled micro servo robot chassis
 
+* Robot Servo Chassis simple servo test.ino - servo test
+* Robot Servo Chassis.zip - full web-controlled app
 * Video (WIP)
 * [Print files](https://www.printables.com/model/1870206-arduino-uno-simple-robot-chassis)
 * Arduino Writeup (WIP)
