@@ -8,7 +8,7 @@ Code available includes:
 * modulino-RSC-pitch-roll.zip - Computes pitch/roll from accel values as positioned on  
 robot servo chassis (RSC), prints to serial
 * modulino-buzzer.zip - beeps 1 second on, 1 second off
-* robot feedback (WIP)
+* Robot SC Sensors.zip - robot control w/ sensor feedback & beeper control
 
 References:
 
